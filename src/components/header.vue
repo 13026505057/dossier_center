@@ -98,7 +98,11 @@
             },
             //确认修改信息
             async confirmBtn(){
-                const returnData = await this.$api.upUserDataInfo(this.submitDataInfo)
+                let pass_word = this.submitDataInfo['pass_word'];
+                const returnData = await this.$api.upUserDataInfo({
+                    pass_word: this.$md5(pass_word),
+                    user_name: this.submitDataInfo['user_name']
+                })
                 if(returnData){
                     if(returnData.code == '0'){
                         localStorage.setItem('userName',returnData.data);

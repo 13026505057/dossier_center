@@ -33,12 +33,11 @@
         methods: {
             //登录
             async login(){
-                // let passWordData = this.loginData.pass_word;
-                // const tokenInfo = await this.$api.loginData({
-                //     user_name: this.loginData.pass_word,
-                //     pass_word: this.$md5(passWordData)
-                // });
-                const tokenInfo = await this.$api.loginData(this.loginData);
+                let passWordData = this.loginData.pass_word;
+                const tokenInfo = await this.$api.loginData({
+                    user_name: this.loginData.pass_word,
+                    pass_word: this.$md5(passWordData)
+                });
                 if(tokenInfo.code == '0'){
                     sessionStorage.setItem('token',tokenInfo.data.token);
                     localStorage.setItem('userName',tokenInfo.data.user.user_true_name);
