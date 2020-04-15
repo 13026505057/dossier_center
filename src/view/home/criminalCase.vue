@@ -1,0 +1,251 @@
+<template>
+    <div class="criminalCasePage"> 
+        <div class="criminalCaseList">
+            <div class="searchCaseInfo">
+                <!-- 筛选 -->
+                <a-row :gutter="16" justify="center" class="searchBtnInfo">
+                    <a-col class="gutter-row" :span="8">
+                        <a-input-search placeholder="请输入案件名称" @search="confirmSearch('case_name')" 
+                            enterButton v-model="pagination.case_name" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="8">
+                        <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
+                            enterButton v-model="pagination.case_police_nm" />
+                    </a-col>
+                </a-row>
+            </div>
+            <a-tabs :defaultActiveKey="1" tabPosition="top"
+                style="margin-top: 20px;text-align: left;" @change="changeTabItem">
+                <!-- 在库详情 -->
+                <a-tab-pane v-for="(item) in tabListBtn" :tab="item.title" :key="item.label">
+                    <a-table bordered :columns="columns_criminal" :pagination="pagination"
+                        :loading="loading" :data-source="tableData_criminal" size="middle"
+                        @change="handleTableChange" class="tableCaseData">
+                        <template slot="operation" slot-scope="text,record">
+                            <span class="editDate table-operation" @click="showCaseDetail(record)">详情</span>
+                        </template>
+                    </a-table>
+                </a-tab-pane>
+            </a-tabs>
+            <!-- 案卷详情tab -->
+            <a-modal title="卷宗详情"
+                centered v-model="showModel.modalDetail" @ok="showModel.modalDetail = false">
+                <a-tabs :defaultActiveKey="showModel.checkedItem" tabPosition="top"
+                    style="text-align: left;" @change="changeTabItem">
+                    <a-tab-pane v-for="(item,index) in showModel.tabListBtn" :tab="'卷宗'+(index+1)" :key="item.label">
+                        <p>
+                            <span style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗名称: </span>
+                            {{ item.title }}
+                        </p>
+                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">调阅历史:</p>
+                        <a-steps :current="showModel.historyList.length" size="small" progressDot>
+                            <a-step :title="itemHistory.title" v-for="itemHistory in showModel.historyList" 
+                                :key="itemHistory.setps">
+                                <template slot="description">
+                                    <div>{{ itemHistory.name }}</div>
+                                    <div>{{ itemHistory.time }}</div>
+                                </template>
+                            </a-step>
+                        </a-steps>
+                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗详情:</p>
+                        <p>卷宗存储位置: {{ item.location }}</p>
+                    </a-tab-pane>
+                </a-tabs>
+            </a-modal>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        data(){
+            return{
+                //tab标签
+                tabListBtn: [
+                    { label: 1, title: '全部' },
+                    { label: 2, title: '刑事' },
+                    { label: 3, title: '行政' },
+                    { label: 4, title: '现场处罚' },
+                ],
+                //标题
+                columns_criminal: [
+                    { title: '案件名称', dataIndex: 'caseName', },
+                    { title: '案件编号', dataIndex: 'caseNumber', },
+                    { title: '案件来源', dataIndex: 'caseFrom', },
+                    { title: '案件类型', dataIndex: 'typeCase', },
+                    { title: '受案单位', dataIndex: 'acceptUnit', },
+                    { title: '主办单位', dataIndex: 'hostUnit', },
+                    { title: '主办民警', dataIndex: 'hostPeo', },
+                    { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' }, },
+                ],
+                tableData_criminal: [],
+                pagination: {
+                    pageNum: 1,
+                    pageSize: 10,
+                    case_type_name: '',
+                    stock_status: 'ZK',
+                    case_name: '',
+                    case_police_nm: ''
+                },
+                loading: false,
+                //卷宗详情
+                showModel: {
+                    checkedItem: 1,
+                    modalDetail: false,
+                    //tab标签
+                    tabListBtn: [],
+                    //操作记录
+                    historyList: [],
+                }
+            }
+        },
+        methods: {
+            handleTableChange(pagination) {
+                // console.log(pagination);
+                const pager = { ...this.pagination };
+                pager.pageNum = pagination.current;
+                pager.current = pagination.current;
+                this.pagination = pager;
+                this.getQueryListData(this.pagination);
+            },
+            confirmSearch(dom){
+                console.log(this.pagination[dom]);
+                this.pagination.pageNum = 1,
+                this.pagination.current = 1;
+                this.pagination.pageSize = 10,
+                this.getQueryListData(this.pagination);
+            },
+            // 切换tab标签
+            changeTabItem(checkedItem){
+                if(this.showModel.modalDetail){
+                    this.getDossierData({
+                        pageNum: 1,
+                        pageSize: 100,
+                        dossier_id: this.tabListBtn[checkedItem-1].key
+                    })
+                }else{
+                    this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
+                    if(checkedItem==1) this.pagination['case_type_name'] = '';
+                    this.getQueryListData(this.pagination);
+                }
+            },
+            //获取在库案件列表
+            async getQueryListData(dataInfo){
+                this.loading = true;
+                const queryListData = await this.$api.getStockCaseList_Page(dataInfo);
+                // console.log(queryListData);
+                const pagination = { ...this.pagination };
+                const queryCaseList = queryListData.data.list;
+                const queryData = [];
+                queryCaseList.forEach(item=>{
+                    queryData.push({
+                        key: item.stock_id,
+                        caseName: item.case_name,
+                        typeCase: item.case_type_name,
+                        caseNumber: item.case_police_nm,
+                        caseFrom: item.case_from,
+                        acceptUnit: item.organiza_org_name,
+                        listData: item.stockList,
+
+                        hostUnit: item.hostUnit,
+                        hostPeo: item.hostPeo,
+                    })
+                })
+                this.tableData_criminal = queryData;
+                pagination.total = queryListData.data.total;
+                this.pagination = pagination;
+                this.loading = false;
+            },
+            // 获取卷宗操作记录
+            async getDossierData(dataInfo){
+                let returnData_log = await this.$api.getCaseLogList_Page(dataInfo);
+                console.log(returnData_log)
+                let historyData = [];
+                returnData_log.data.list.forEach((item,index)=>{
+                    historyData.push({
+                        key: item.dossier_log_id,
+                        title: item.result,
+                        step: index,
+                        time: item.create_time,
+                        name: item.organize_user_name
+                    })
+                })
+                this.showModel.historyList = historyData;
+            },
+            // 展示详情
+            showCaseDetail(e){
+                let dossierData = [];
+                e.listData.forEach((item,index)=>{
+                    dossierData.push({
+                        key: item.dossier_id,
+                        label: index+1,
+                        title: item.dossier_name,
+                        location: ''+item.location_name+' - '+item.floor_name+' - '+item.room_name+'',
+                    })
+                })
+                this.getDossierData({
+                    pageNum: 1,
+                    pageSize: 100,
+                    dossier_id: e.listData[0].dossier_id
+                })
+                this.showModel.tabListBtn = dossierData;
+                this.showModel.modalDetail = true;
+            }
+        },
+        mounted() {
+            this.getQueryListData(this.pagination);
+        },
+    }
+</script>
+
+<style lang="less" scope>
+    .suo{
+        background-color: green;
+        padding-bottom: 10px;
+    }
+    .gui{
+        background-color: red;
+    }
+    .divWidth{
+        padding: 0 10px;
+        display: inline-block;
+    }
+
+    @bgBtnColor: #1F62D1;
+    .criminalCasePage{
+        padding: 20px 0;
+        .criminalCaseList{
+            padding: 20px 0;
+            background-color: white;
+            height: 100%;
+            .searchCaseInfo{
+                text-align: left;
+                padding-left: 20px;
+                .enterInputData{
+                    width: auto;
+                }
+                .comfirmAdd{
+                    margin: 0 10px;
+                    color: white;
+                    background-color: @bgBtnColor;
+                }
+                .refreshBtn{
+                    margin-right: 10px;
+                }
+            }
+            .tableCaseData{
+                margin-top: 20px;
+                .ant-table table, .ant-table-thead > tr > th{
+                    text-align: center;
+                }
+                .editDate{
+                    display: inline-block;
+                    padding: 0 5px;
+                    background-color: @bgBtnColor;
+                    color: white;
+                    border-radius: 5px;
+                }
+            }
+        }
+    }
+</style>
