@@ -171,7 +171,7 @@
                         name_borrowing: item.out_user_name,
                         name_opertion: item.organize_user_name,
                         name_join: item.join_user_name,
-                        type: item.operate_type,
+                        type: item.operate_type=='inStock'?'入库':'出库',
                         result: item.result,
                         video_id: item.video_id
                     })
