@@ -46,7 +46,7 @@
         });
         chart.data(this.charData.data)
         chart.tooltip({
-          // showMarkers: false,
+          showMarkers: false,
           shared: true,
         });
         chart.removeInteraction('legend-filter');
@@ -65,6 +65,10 @@
           // 展示形式
           chart.interval().position('time*total').color('month',data=>{ 
             if(data<0) return '#ff5957'; else return '#36c361';
+          }).size('month',(data)=>{
+            if(this.charData.data.length<10){
+              return 10
+            }
           });
           // 展示备注
           
@@ -86,7 +90,15 @@
           chart.scale('total', { min: 0, max: this.charData.total })
           chart.scale('type', { range: [0.2,0.8] });
           // 展示形式
-          chart.interval().position('type*total').color('type');
+          chart.interval().position('type*total').color('type')
+            .size('total',(data)=>{
+              if(this.charData.data.length<10){
+                return 20
+              }else {
+                return 30
+              }
+            });
+          // chart.legend(false);
           chart.interaction('element-highlight');
         }
         //柱状图(双标)
@@ -106,7 +118,18 @@
                 type: 'dodge',
                 marginRatio: 0,
               },
-            ]);
+            ]).size('month',(data)=>{
+              if(this.charData.data.length<10){
+                return 20
+              }
+            });
+          chart.legend({
+            custom: true,
+            items: [
+              { value: 'type', name: '出库', marker: { symbol: 'square' }},
+              { value: 'month', name: '入库', marker: { symbol: 'square',style: { fill: '#36c361', r: 5 } }}
+            ],
+          });
           chart.interaction('element-highlight');
         }
         //环形图
@@ -140,7 +163,7 @@
                 },
               },
             });
-            chart.interaction('element-active');
+            // chart.interaction('element-active');
         }
         // 饼状图
         else if(item.type == 'pieChart'){

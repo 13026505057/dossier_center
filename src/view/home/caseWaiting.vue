@@ -137,12 +137,12 @@
             getBarCodeInfo(e,f){
                 console.log(e,f)
                 let content = f.dossier_name;
-                if(content.length>7) content = content.slice(0,7) + '...';
+                if(content.length>11) content = content.slice(0,11) + '...';
                 // this.printDeta('123456789012','123456789012',`卷宗名称：我的家里`);
-                this.printDeta(f.dossier_id,f.dossier_id,`卷宗名称：${content}`);
+                this.printDeta(f.dossier_id,f.dossier_id,content);
             },
             //打印条形码
-            printDeta(value,text,tipsContent){
+            async printDeta(value,text,tipsContent){
                 //生成条形码
                 console.log(value,text,tipsContent)
                 JsBarcode("#canvasCode1", value, {
@@ -181,6 +181,9 @@
                     margin:0,//设置条形码周围的空白边距
                     marginBottom: 5,
                 });
+                //返给后台打印确认
+                let sendBackStatus = await this.$api.sendBackStatus_print({dossier_id:value});
+                console.log(sendBackStatus)
             },
         },
         mounted() {

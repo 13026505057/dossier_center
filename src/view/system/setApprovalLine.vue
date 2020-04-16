@@ -489,34 +489,32 @@
             },
             addItem(){
                 const listData = this.submitDataInfo['approveList'];
-                listData.forEach((item,index)=>{
-                    // console.log(this.contentNum)
-                    // console.log(index)
-                    // if(this.contentNum == index){
-                        this.$api.addApproveData({
-                            org_flow_id: this.submitDataInfo['org_flow_id'],
-                            approve_name: item.approve_name,
-                            approve_type: item.approve_type,
-                            attribute_order: item.attribute_order,
-                            is_last: Number(index+1 == this.submitDataInfo['approveList'].length)
-                        }).then((returnData)=>{
-                            this.$api.addApproveManData({
-                                approve_id: returnData.data.approve_id,
-                                ids: item.approve_userId.join()
-                            })
-                            // this.contentNum++;
-                            console.log(this.contentNum)
-                            if(index+1 == this.submitDataInfo['approveList'].length){
-                                if(returnData.code == '0'){
-                                    this.showModel.modalInput = false;
-                                    this.resetSubmitInfo();
-                                    this.getApprovalList(this.pagination);
-                                }
-                            }
-                        });
-                    // }
-                    
-                })
+                this.recurTest(listData[0],0);
+            },
+            //递归遍历
+            recurTest(item,index){
+                this.$api.addApproveData({
+                    org_flow_id: this.submitDataInfo['org_flow_id'],
+                    approve_name: item.approve_name,
+                    approve_type: item.approve_type,
+                    attribute_order: item.attribute_order,
+                    is_last: Number(index+1 == this.submitDataInfo['approveList'].length)
+                }).then((returnData)=>{
+                    this.$api.addApproveManData({
+                        approve_id: returnData.data.approve_id,
+                        ids: item.approve_userId.join()
+                    })
+                    console.log(index+' well done')
+                    if(++index == this.submitDataInfo['approveList'].length){
+                        if(returnData.code == '0'){
+                            this.showModel.modalInput = false;
+                            this.resetSubmitInfo();
+                            this.getApprovalList(this.pagination);
+                        }
+                    }else{
+                        this.recurTest(this.submitDataInfo['approveList'][index],index)
+                    }
+                });
             }
         },
     }

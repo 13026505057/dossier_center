@@ -713,4 +713,12 @@ export default {
             data
         })
     },
+    //打印条码后
+    sendBackStatus_print(data){
+        return service({
+            url: '/stock/stock/DRK',
+            method: 'post',
+            data
+        })
+    },
 }
