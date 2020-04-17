@@ -121,11 +121,10 @@
                         typeCase: item.case_type_name,
                         caseNumber: item.case_police_nm,
                         caseFrom: item.case_from,
-                        acceptUnit: item.organiza_org_name,
+                        acceptUnit: item.sa_org_name,
                         listData: item.stockList,
-
-                        hostUnit: item.hostUnit,
-                        hostPeo: item.hostPeo,
+                        hostUnit: item.organiza_org_name,
+                        hostPeo: item.organiza_user_name,
                     })
                 })
                 this.tableData_criminal = queryData;

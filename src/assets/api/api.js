@@ -233,7 +233,15 @@ export default {
             data
         })
     }, 
-    //获取审批流列表
+    //获取全部审批流列表
+    getApproveFlowList(data){
+        return service({
+            url: '/juanzong/org/org-flow/get',
+            method: 'post',
+            data
+        })
+    }, 
+    //获取审批流列表_分页
     getApproveFlowList_Page(data){
         return service({
             url: '/juanzong/org/org-flow/getByPage',
@@ -716,7 +724,23 @@ export default {
     //打印条码后
     sendBackStatus_print(data){
         return service({
-            url: '/stock/stock/DRK',
+            url: '/juanzong/stock/stock/DRK',
+            method: 'post',
+            data
+        })
+    }, 
+    // 导出查询文件
+    stockExport(data){
+        return service({
+            url: '/juanzong/export/stockExport',
+            method: 'get',
+            data
+        })
+    },
+    // 调取出库
+    outApporve(data){
+        return service({
+            url: '/juanzong/stock/stock/DCK',
             method: 'post',
             data
         })

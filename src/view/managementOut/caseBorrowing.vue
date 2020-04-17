@@ -16,7 +16,8 @@
                                 <a-table :columns="columns_caseBorrow" :dataSource="tableData_caseBorrow" :pagination="pagination" :loading="loading"
                                     class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange">
                                     <template slot="operation" slot-scope="text,record">
-                                        <span class="editDate table-operation" @click="borrowApplica(record)">申请借阅</span>
+                                        <span class="editDate table-operation" @click="outApplica(record)" v-if="record.socket_status == '暂存'">申请出库</span>
+                                        <span class="editDate table-operation" @click="borrowApplica(record)" v-else-if="record.socket_status == '已归档'">申请借阅</span>
                                     </template>
                                 </a-table>
                             </a-tab-pane>
@@ -26,10 +27,10 @@
                             class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange"
                             v-if="tabCheckeTab==2" :loading="loading">
                             <a-steps slot="expandedRowRender" slot-scope="record" >
-                                <a-step :status="(item.is_approved==1 || item.is_approved==0)?'process':(item.is_approved==2?'finish':'wait')"
+                                <a-step :status="(item.is_approved==1 || (item.is_approved==2 && item.approve_result=='agree'))?'process':'wait'"
                                     :title="item.title" v-for="item in record.listData" :key="item.key">
                                     {{ item.is_approved }}
-                                    <a-icon :type="item.approve_result=='agree'?'check-circle':(item.is_approved=='disAgree'?'close-circle':'loading')" 
+                                    <a-icon :type="item.approve_result=='agree'?'check-circle':(item.approve_result=='disAgree'?'close-circle':'loading')" 
                                         slot="icon"/>
                                     <template slot="description">
                                         <div>{{ item.approve_content }}</div>
@@ -93,7 +94,7 @@
                     org_flow_id: [],
                 },
                 caseDataInfoList: [
-                    { captionTitle: '借阅类型',placeholder: '请选择借阅类型',dom:'org_flow_id' },
+                    { captionTitle: '审批流程',placeholder: '请选择审批流程',dom:'org_flow_id' },
                     { captionTitle: '归还时间',placeholder: '请选择归还时间',dom:'borrow_time' },
                 ],
                 tabTabList: [
@@ -108,12 +109,13 @@
                     borrow_time: {}
                 },
                 //案件列表_可借阅
-                columns_caseBorrow: [
+                columns_caseBorrow: [ 
                     { title: '案件编号', dataIndex: 'number', },
                     { title: '案卷名称', dataIndex: 'name', },
                     { title: '案卷类型', dataIndex: 'type', },
                     { title: '主办单位', dataIndex: 'mainOff', },
                     { title: '所在楼宇', dataIndex: 'location', },
+                    { title: '当前状态', dataIndex: 'socket_status', },
                     {
                         title: '操作', dataIndex: 'operation', key: 'operation',
                         scopedSlots: { customRender: 'operation' },
@@ -256,6 +258,20 @@
                 this.showModel.modalAppreciate = true;
                 this.submitDataInfo.case_id = e.case_id;
             },
+            //点击出库申请
+            async outApplica(e){
+                let returnData_out = await this.$api.outApporve({ case_id: e.case_id });
+                console.log(returnData_out);
+            },
+            stock_statusTrans(data){
+                let status = '';
+                let status_en = ['ZC','YGD','SPZ','DCK'];
+                let status_zh = ['暂存','已归档','审批中','待出库'];
+                status_en.forEach((item,index)=>{
+                    if(item == data) status = status_zh[index]
+                })
+                return status
+            },
             //获取个人审批记录列表
             async getApproveList(data){
                 const pagination = { ...this.pagination };
@@ -354,6 +370,7 @@
                         type: item.case_type_name,
                         mainOff: item.sa_org_name,
                         location: ''+item.location_name+' - '+item.floor_name+' - '+item.room_name,
+                        socket_status: this.stock_statusTrans(item.stock_status),
                     })
                 })
                 this.tableData_caseBorrow = queryData;
@@ -384,16 +401,16 @@
                 console.log(e)
                 this.$router.push({path:'/caseAppDetail',query:{itemDetail: JSON.stringify(e)}});
             },
-            // 获取申批类型列表
+            // 获取申批流列表
             async getOperatorList(){
-                const operatortList = await this.$api.getApproveTypeData();
+                const operatortList = await this.$api.getApproveFlowList();
                 // console.log(departmentList);
                 const queryCaseList = operatortList.data;
                 const operatortData = [];
                 queryCaseList.forEach(item=>{
                     operatortData.push({
-                        key: item.flow_type_id,
-                        name: item.flow_type_name,
+                        key: item.org_flow_id,
+                        name: item.org_flow_name,
                     })
                 })
                 this.showModel.org_flow_id = operatortData;

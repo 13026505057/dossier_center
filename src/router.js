@@ -9,7 +9,12 @@ import myReminder from './view/home/myReminder'
 import reminderList from './view/home/reminderList'
 import addCaseInfo from './view/home/addCaseInfo'
 import queryCase from './view/home/queryCase'
-import criminalCase from './view/home/criminalCase'
+// 在库管理_全部
+import allCaseIn from './view/managementIn/allCaseIn'
+// 在库管理_暂存区 
+import temporaryCaseIn from './view/managementIn/temporaryCaseIn'
+// 在库管理_永久保存区
+import sealUpCaseIn from './view/managementIn/sealUpCaseIn'
 import querySetting from './view/home/querySetting'
 // 盘点管理
 import stockControl from './view/home/stockControl'
@@ -121,10 +126,24 @@ export default new Router({
           }
         },
         {
-          path: 'criminalCase',
-          component: criminalCase,
+          path: 'allCaseIn',
+          component: allCaseIn,
           meta: {
-            navigationBarTitleText: '刑事案件'
+            navigationBarTitleText: '在库管理_全部'
+          }
+        },
+        {
+          path: 'temporaryCaseIn',
+          component: temporaryCaseIn,
+          meta: {
+            navigationBarTitleText: '在库管理_暂存'
+          }
+        },
+        {
+          path: 'sealUpCaseIn',
+          component: sealUpCaseIn,
+          meta: {
+            navigationBarTitleText: '在库管理_封存'
           }
         },
         {

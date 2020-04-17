@@ -1,6 +1,6 @@
 <template>
-    <div class="criminalCasePage"> 
-        <div class="criminalCaseList">
+    <div class="allCaseInPage"> 
+        <div class="allCaseInList">
             <div class="searchCaseInfo">
                 <!-- 筛选 -->
                 <a-row :gutter="16" justify="center" class="searchBtnInfo">
@@ -11,6 +11,9 @@
                     <a-col class="gutter-row" :span="8">
                         <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
                             enterButton v-model="pagination.case_police_nm" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="8">
+                        <a-button type="primary" @click="stockExport">导出</a-button>
                     </a-col>
                 </a-row>
             </div>
@@ -121,7 +124,7 @@
                     this.getDossierData({
                         pageNum: 1,
                         pageSize: 100,
-                        dossier_id: this.tabListBtn[checkedItem-1].key
+                        dossier_id: this.showModel.tabListBtn[checkedItem-1].key
                     })
                 }else{
                     this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
@@ -144,11 +147,10 @@
                         typeCase: item.case_type_name,
                         caseNumber: item.case_police_nm,
                         caseFrom: item.case_from,
-                        acceptUnit: item.organiza_org_name,
+                        acceptUnit: item.sa_org_name,
                         listData: item.stockList,
-
-                        hostUnit: item.hostUnit,
-                        hostPeo: item.hostPeo,
+                        hostUnit: item.organiza_org_name,
+                        hostPeo: item.organiza_user_name,
                     })
                 })
                 this.tableData_criminal = queryData;
@@ -190,7 +192,24 @@
                 })
                 this.showModel.tabListBtn = dossierData;
                 this.showModel.modalDetail = true;
-            }
+            },
+            //  导出查询条件execle
+            stockExport() {
+                let dataInfo = {
+                    case_type_name: this.pagination['case_type_name'],
+                    case_name: this.pagination['case_name'],
+                    case_police_nm: this.pagination['case_police_nm'],
+                };
+                let arr = ['case_type_name','case_name','case_police_nm'];
+                var url = sessionStorage.getItem('baseURL')+`/juanzong/export/stockExport?stock_status=ZK`
+                arr.forEach((item)=>{
+                    if(dataInfo[item]){
+                        url = url+'&'+item+'='+dataInfo[item]
+                    }
+                })
+                console.log(url)
+                window.location.href = url;
+            },
         },
         mounted() {
             this.getQueryListData(this.pagination);
@@ -199,22 +218,10 @@
 </script>
 
 <style lang="less" scope>
-    .suo{
-        background-color: green;
-        padding-bottom: 10px;
-    }
-    .gui{
-        background-color: red;
-    }
-    .divWidth{
-        padding: 0 10px;
-        display: inline-block;
-    }
-
     @bgBtnColor: #1F62D1;
-    .criminalCasePage{
+    .allCaseInPage{
         padding: 20px 0;
-        .criminalCaseList{
+        .allCaseInList{
             padding: 20px 0;
             background-color: white;
             height: 100%;

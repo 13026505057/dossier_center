@@ -1,6 +1,6 @@
 <template>
-    <div class="caseWaitingPage"> 
-        <div class="caseWaitingList">
+    <div class="temoraryCasePage"> 
+        <div class="temoraryCaseList">
             <div class="searchCaseInfo">
                 <!-- 筛选 -->
                 <a-row :gutter="16" justify="center" class="searchBtnInfo">
@@ -12,35 +12,54 @@
                         <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
                             enterButton v-model="pagination.case_police_nm" />
                     </a-col>
+                    <a-col class="gutter-row" :span="8">
+                        <a-button type="primary" @click="stockExport">导出</a-button>
+                    </a-col>
                 </a-row>
             </div>
             <a-tabs :defaultActiveKey="1" tabPosition="top"
                 style="margin-top: 20px;text-align: left;" @change="changeTabItem">
-                <!-- 待入库列表详情 -->
+                <!-- 在库详情 -->
                 <a-tab-pane v-for="(item) in tabListBtn" :tab="item.title" :key="item.label">
                     <a-table bordered :columns="columns_criminal" :pagination="pagination"
                         :loading="loading" :data-source="tableData_criminal" size="middle"
                         @change="handleTableChange" class="tableCaseData">
-                        <a-table slot="expandedRowRender" :columns="innerColumns" slot-scope="record"
-                            :dataSource="record.listData" :pagination="false" size="middle">
-                            <template slot="operation" slot-scope="text,record">
-                                <span class="editDate table-operation" @click="getBarCodeInfo(text,record)" 
-                                    v-print="'#printAreaInfo1'">打印条码</span>
-                            </template>
-                        </a-table>
+                        <template slot="operation" slot-scope="text,record">
+                            <span class="editDate table-operation" @click="showCaseDetail(record)">详情</span>
+                        </template>
                     </a-table>
                 </a-tab-pane>
             </a-tabs>
-        </div>
-        <div id="printAreaInfo1">
-            <img id="canvasCode1"/>
-            <img id="tipsContent1"/>
+            <!-- 案卷详情tab -->
+            <a-modal title="卷宗详情"
+                centered v-model="showModel.modalDetail" @ok="showModel.modalDetail = false">
+                <a-tabs :defaultActiveKey="showModel.checkedItem" tabPosition="top"
+                    style="text-align: left;" @change="changeTabItem">
+                    <a-tab-pane v-for="(item,index) in showModel.tabListBtn" :tab="'卷宗'+(index+1)" :key="item.label">
+                        <p>
+                            <span style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗名称: </span>
+                            {{ item.title }}
+                        </p>
+                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">调阅历史:</p>
+                        <a-steps :current="showModel.historyList.length" size="small" progressDot>
+                            <a-step :title="itemHistory.title" v-for="itemHistory in showModel.historyList" 
+                                :key="itemHistory.setps">
+                                <template slot="description">
+                                    <div>{{ itemHistory.name }}</div>
+                                    <div>{{ itemHistory.time }}</div>
+                                </template>
+                            </a-step>
+                        </a-steps>
+                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗详情:</p>
+                        <p>卷宗存储位置: {{ item.location }}</p>
+                    </a-tab-pane>
+                </a-tabs>
+            </a-modal>
         </div>
     </div>
 </template>
 
 <script>
-    let JsBarcode = require('jsbarcode');
     export default {
         data(){
             return{
@@ -60,28 +79,28 @@
                     { title: '受案单位', dataIndex: 'acceptUnit', },
                     { title: '主办单位', dataIndex: 'hostUnit', },
                     { title: '主办民警', dataIndex: 'hostPeo', },
+                    { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' }, },
                 ],
                 tableData_criminal: [],
                 pagination: {
                     pageNum: 1,
                     pageSize: 10,
                     case_type_name: '',
-                    stock_status: 'DRK',
+                    stock_status: 'ZK',
+                    shale_type: 1,  //智能柜1，密集架2
                     case_name: '',
                     case_police_nm: ''
                 },
                 loading: false,
-                //案卷列表
-                innerColumns:[
-                    { title: '案卷名称', dataIndex: 'dossier_name' },
-                    { title: '创建日期', dataIndex: 'in_time' },
-                    { title: '案卷状态', dataIndex: 'result' },
-                    { title: '办案民警', dataIndex: 'in_cz_user_name' },
-                    {
-                    title: '操作', dataIndex: 'operation', key: 'operation',
-                        scopedSlots: { customRender: 'operation' },
-                    },
-                ],
+                //卷宗详情
+                showModel: {
+                    checkedItem: 1,
+                    modalDetail: false,
+                    //tab标签
+                    tabListBtn: [],
+                    //操作记录
+                    historyList: [],
+                }
             }
         },
         methods: {
@@ -102,9 +121,17 @@
             },
             // 切换tab标签
             changeTabItem(checkedItem){
-                this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
-                if(checkedItem==1) this.pagination['case_type_name'] = '';
-                this.getQueryListData(this.pagination);
+                if(this.showModel.modalDetail){
+                    this.getDossierData({
+                        pageNum: 1,
+                        pageSize: 100,
+                        dossier_id: this.showModel.tabListBtn[checkedItem-1].key
+                    })
+                }else{
+                    this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
+                    if(checkedItem==1) this.pagination['case_type_name'] = '';
+                    this.getQueryListData(this.pagination);
+                }
             },
             //获取在库案件列表
             async getQueryListData(dataInfo){
@@ -116,7 +143,7 @@
                 const queryData = [];
                 queryCaseList.forEach(item=>{
                     queryData.push({
-                        key: item.case_id,
+                        key: item.stock_id,
                         caseName: item.case_name,
                         typeCase: item.case_type_name,
                         caseNumber: item.case_police_nm,
@@ -132,57 +159,57 @@
                 this.pagination = pagination;
                 this.loading = false;
             },
-            // 获取打印条码信息
-            getBarCodeInfo(e,f){
-                console.log(e,f)
-                let content = f.dossier_name;
-                if(content.length>11) content = content.slice(0,11) + '...';
-                // this.printDeta('123456789012','123456789012',`卷宗名称：我的家里`);
-                this.printDeta(f.dossier_id,f.dossier_id,content);
+            // 获取卷宗操作记录
+            async getDossierData(dataInfo){
+                let returnData_log = await this.$api.getCaseLogList_Page(dataInfo);
+                console.log(returnData_log)
+                let historyData = [];
+                returnData_log.data.list.forEach((item,index)=>{
+                    historyData.push({
+                        key: item.dossier_log_id,
+                        title: item.result,
+                        step: index,
+                        time: item.create_time,
+                        name: item.organize_user_name
+                    })
+                })
+                this.showModel.historyList = historyData;
             },
-            //打印条形码
-            async printDeta(value,text,tipsContent){
-                //生成条形码
-                console.log(value,text,tipsContent)
-                JsBarcode("#canvasCode1", value, {
-                    format: "CODE128",//选择要使用的条形码类型
-                    width:2,//设置条之间的宽度
-                    height:50,//高度
-                    displayValue:true,//是否显示文字
-                    text:text,//覆盖显示的文本
-                    // fontOptions:"bold italic",//使文字加粗体或变斜体
-                    font:"宋体",//设置文本的字体
-                    textAlign:"center",//设置文本的水平对齐方式
-                    textPosition:"bottom",//设置文本的垂直位置
-                    textMargin:5,//设置条形码和文本之间的间距
-                    fontSize:15,//设置文本的大小
-                    background:"#fff",//设置条形码的背景
-                    lineColor:"#000",//设置条和文本的颜色。
-                    margin:0,//设置条形码周围的空白边距
-                    marginBottom:5,
-                    marginLeft:10,
-                });
-                //备注信息
-                JsBarcode("#tipsContent1", value, {
-                    format: "CODE128",//选择要使用的条形码类型
-                    width:2,//设置条之间的宽度
-                    height:0,//高度
-                    displayValue:true,//是否显示文字
-                    text:tipsContent,//覆盖显示的文本
-                    // fontOptions:"bold",//使文字加粗体或变斜体
-                    font:"宋体",//设置文本的字体
-                    textAlign:"center",//设置文本的水平对齐方式
-                    textPosition:"bottom",//设置文本的垂直位置
-                    textMargin:3,//设置条形码和文本之间的间距
-                    fontSize:16,//设置文本的大小
-                    background:"#fff",//设置条形码的背景
-                    lineColor:"#000",//设置条和文本的颜色。
-                    margin:0,//设置条形码周围的空白边距
-                    marginBottom: 5,
-                });
-                //返给后台打印确认
-                let sendBackStatus = await this.$api.sendBackStatus_print({dossier_id:value});
-                console.log(sendBackStatus)
+            // 展示详情
+            showCaseDetail(e){
+                let dossierData = [];
+                e.listData.forEach((item,index)=>{
+                    dossierData.push({
+                        key: item.dossier_id,
+                        label: index+1,
+                        title: item.dossier_name,
+                        location: ''+item.location_name+' - '+item.floor_name+' - '+item.room_name+'',
+                    })
+                })
+                this.getDossierData({
+                    pageNum: 1,
+                    pageSize: 100,
+                    dossier_id: e.listData[0].dossier_id
+                })
+                this.showModel.tabListBtn = dossierData;
+                this.showModel.modalDetail = true;
+            },
+            //  导出查询条件execle
+            stockExport() {
+                let dataInfo = {
+                    case_type_name: this.pagination['case_type_name'],
+                    case_name: this.pagination['case_name'],
+                    case_police_nm: this.pagination['case_police_nm'],
+                };
+                let arr = ['case_type_name','case_name','case_police_nm'];
+                var url = sessionStorage.getItem('baseURL')+`/juanzong/export/stockExport?stock_status=ZK&shale_type=1`
+                arr.forEach((item)=>{
+                    if(dataInfo[item]){
+                        url = url+'&'+item+'='+dataInfo[item]
+                    }
+                })
+                console.log(url)
+                window.location.href = url;
             },
         },
         mounted() {
@@ -193,9 +220,9 @@
 
 <style lang="less" scope>
     @bgBtnColor: #1F62D1;
-    .caseWaitingPage{
+    .temoraryCasePage{
         padding: 20px 0;
-        .caseWaitingList{
+        .temoraryCaseList{
             padding: 20px 0;
             background-color: white;
             height: 100%;
@@ -227,9 +254,6 @@
                     border-radius: 5px;
                 }
             }
-        }
-        #printAreaInfo1{
-            display: none
         }
     }
 </style>

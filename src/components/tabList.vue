@@ -50,8 +50,12 @@
                     },
                     {
                         downIcon: ['1'],
-                        captionsTitle: { icon: 'icon-cangkuguanli',title: '在库管理',keyId: 'criminalCase' },
-                        childrenList: []
+                        captionsTitle: { icon: 'icon-cangkuguanli',title: '在库管理',keyId: 'tab_case' },
+                        childrenList: [
+                            { icon: 'icon-ziyuan',title: '全部',keyId: 'allCaseIn' },
+                            { icon: 'icon-dairuku1',title: '暂存区',keyId: 'temporaryCaseIn' },
+                            { icon: 'icon-ruku',title: '封存区',keyId: 'sealUpCaseIn' },
+                        ]
                     },
                     // {
                     //     downIcon: ['1'],
@@ -60,17 +64,17 @@
                     // },
                     {
                         downIcon: ['1'],
-                        captionsTitle: { icon: 'icon-pandianguanli',title: '盘点管理',keyId: 'stockControl' },
-                        childrenList: []
-                    },
-                    {
-                        downIcon: ['1'],
                         captionsTitle: { icon: 'icon-chuku',title: '出库管理',keyId: 'tab_out' },
                         childrenList: [
                             { icon: 'icon-pifu',title: '批复状态',keyId: 'caseStatus' },
                             { icon: 'icon-file-management-borrowed-record',title: '案卷借阅',keyId: 'caseBorrowing' },
                             { icon: 'icon-guihuan',title: '案卷归还',keyId: 'caseReturn' },
                         ]
+                    },
+                    {
+                        downIcon: ['1'],
+                        captionsTitle: { icon: 'icon-pandianguanli',title: '盘点管理',keyId: 'stockControl' },
+                        childrenList: []
                     },
                     {
                         downIcon: ['1'],

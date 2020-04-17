@@ -1,0 +1,26 @@
+
+@baseUrl = http://192.168.2.98:8080
+
+# @name login
+POST {{baseUrl}}/juanzong/user/user/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+kf-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrb2ZhbiIsInVzZXJOYW1lIjoiMSIsImV4cCI6MTU4NzE3NDc3NywidXNlcklkIjoiMSIsImlhdCI6MTU4NzA4ODM3N30.YcwbIjY73IhuSFqr7GX0Kj8HNMrmFvjQe_biDP-1SUc
+
+user_name=1&pass_word=c4ca4238a0b923820dcc509a6f75849b
+
+###
+# @name return_userLog
+POST {{baseUrl}}/juanzong/user/user-flow/getByPage HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+kf-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrb2ZhbiIsInVzZXJOYW1lIjoiMSIsImV4cCI6MTU4NzE3NDc3NywidXNlcklkIjoiMSIsImlhdCI6MTU4NzA4ODM3N30.YcwbIjY73IhuSFqr7GX0Kj8HNMrmFvjQe_biDP-1SUc
+
+pageNum=1&pageSize=5&user_flow_status=0
+
+###
+# @name return
+POST {{baseUrl}}/stock/stock/DCK HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+kf-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrb2ZhbiIsInVzZXJOYW1lIjoiMSIsImV4cCI6MTU4NzE3NDc3NywidXNlcklkIjoiMSIsImlhdCI6MTU4NzA4ODM3N30.YcwbIjY73IhuSFqr7GX0Kj8HNMrmFvjQe_biDP-1SUc
+
+case_id=2
+

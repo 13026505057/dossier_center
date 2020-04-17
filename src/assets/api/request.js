@@ -4,15 +4,16 @@ import router from '@/router'
 import { message } from 'ant-design-vue';
 
 const service = axios.create({
-    baseURL: 'http://106.12.57.57:8080',  // api的base_url 
+    // baseURL: 'http://106.12.57.57:8080',  // api的base_url 
     // baseURL: 'http://192.168.2.98:8080',
-    // baseURL: 'http://56.212.7.252:80',
+    baseURL: 'http://56.212.7.252:80',
     // baseURL: 'http://localhost:8080',
     timeout: 5000  // 请求超时时间
 })
 
 service.interceptors.request.use(config => {
     console.log(config)
+    sessionStorage.setItem('baseURL',config.baseURL)
     if (sessionStorage.getItem("token")) {
         config.headers['kf-token'] = sessionStorage.getItem("token");
     }

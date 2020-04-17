@@ -235,7 +235,7 @@
                         width: 35px;
                         color: white;
                         height: 35px;
-                        line-height: 40px;
+                        line-height: 35px;
                         border-radius: 50px;
                     }
                 }

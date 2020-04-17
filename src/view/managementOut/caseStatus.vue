@@ -1,7 +1,7 @@
 <template>
     <div class="caseStatusPage"> 
         <div class="caseStatusList">
-            <!--<a-row :gutter="16" justify="center" class="searchBtnInfo">
+            <a-row :gutter="16" justify="center" class="searchBtnInfo">
                 <a-col class="gutter-row" :span="5">
                     状态类型：
                     <a-select :defaultValue="checkedInfo.statusChecked" @change="handleChange_status">
@@ -11,15 +11,15 @@
                         </a-select-option>
                     </a-select>
                 </a-col>
-            </a-row>-->
+            </a-row>
             <!-- 借阅申请记录 -->
             <a-table :columns="columns_history" :dataSource="tableData_history" :pagination="pagination" 
                 class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange" :loading="loading">
                 <a-steps slot="expandedRowRender" slot-scope="record" >
-                    <a-step :status="(item.is_approved==1 || item.is_approved==0)?'process':(item.is_approved==2?'finish':'wait')" 
+                    <a-step :status="(item.is_approved==1 || (item.is_approved==2 && item.approve_result=='agree'))?'process':'wait'"
                         :title="item.title" v-for="item in record.listData" :key="item.key">
                         {{ item.is_approved }}
-                        <a-icon :type="item.approve_result=='agree'?'check-circle':(item.is_approved=='disAgree'?'close-circle':'loading')" 
+                        <a-icon :type="item.approve_result=='agree'?'check-circle':(item.approve_result=='disAgree'?'close-circle':'loading')" 
                             slot="icon"/>
                         <template slot="description">
                             <div>{{ item.approve_content }}</div>
@@ -39,9 +39,10 @@
                 checkedInfo: {
                     statusChecked: '全部',
                     statusList: [
-                        { title: '全部', itemId: '1,2' },
-                        { title: '审批中', itemId: '1' },
-                        { title: '审批完成', itemId: '2' },
+                        { title: '全部', itemId: '' },
+                        { title: '未完成', itemId: '0' },
+                        { title: '通过', itemId: '1' },
+                        { title: '未通过', itemId: '2' },
                     ], 
                 },
                 showModel: {
@@ -58,7 +59,7 @@
                 pagination: {
                     pageNum: 1,
                     pageSize: 10,
-                    is_approved: ''
+                    user_flow_status: ''
                 },
                 loading: false,
                 //申请历史记录
@@ -78,7 +79,7 @@
             //盘点状态筛选
             handleChange_status(e,state){
                 console.log(e,state)
-                this.pagination.is_approved = state.key;
+                this.pagination.user_flow_status = state.key;
                 this.getApproveList({
                     ...this.pagination
                 });
