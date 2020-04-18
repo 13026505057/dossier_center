@@ -15,6 +15,8 @@ import allCaseIn from './view/managementIn/allCaseIn'
 import temporaryCaseIn from './view/managementIn/temporaryCaseIn'
 // 在库管理_永久保存区
 import sealUpCaseIn from './view/managementIn/sealUpCaseIn'
+// 在库管理_卷宗详情
+import dossierDetail from './view/managementIn/dossierDetail'
 import querySetting from './view/home/querySetting'
 // 盘点管理
 import stockControl from './view/home/stockControl'
@@ -48,7 +50,6 @@ import statusOurIn from './view/chartCensus/statusOurIn'
 import statisticsAlarm from './view/chartCensus/statisticsAlarm'
 // 存储资源_图表统计
 import statisticsStorage from './view/chartCensus/statisticsStorage'
-
 // 区域设置_系统设置
 import setAreaLine from './view/system/setAreaLine'
 import setDepartment from './view/system/setDepartment'
@@ -130,6 +131,13 @@ export default new Router({
           component: allCaseIn,
           meta: {
             navigationBarTitleText: '在库管理_全部'
+          }
+        },
+        {
+          path: 'dossierDetail',
+          component: dossierDetail,
+          meta: {
+            navigationBarTitleText: '在库管理_卷宗详情'
           }
         },
         {

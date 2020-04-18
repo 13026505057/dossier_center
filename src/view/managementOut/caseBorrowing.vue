@@ -16,8 +16,12 @@
                                 <a-table :columns="columns_caseBorrow" :dataSource="tableData_caseBorrow" :pagination="pagination" :loading="loading"
                                     class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange">
                                     <template slot="operation" slot-scope="text,record">
-                                        <span class="editDate table-operation" @click="outApplica(record)" v-if="record.socket_status == '暂存'">申请出库</span>
-                                        <span class="editDate table-operation" @click="borrowApplica(record)" v-else-if="record.socket_status == '已归档'">申请借阅</span>
+                                        <a-popconfirm
+                                            title="当前卷宗处于暂存区，请直接前往卷宗暂存区调阅出库？"
+                                            @confirm="outApplica(record)" okText="确认" cancelText="取消">
+                                            <span class="editDate table-operation" v-if="record.socket_status == '暂存'">申请出库</span>
+                                        </a-popconfirm>
+                                        <span class="editDate table-operation" @click="borrowApplica(record)" v-if="record.socket_status == '已归档'">申请借阅</span>
                                     </template>
                                 </a-table>
                             </a-tab-pane>
@@ -42,7 +46,7 @@
                         <!-- 申请待操作 -->
                         <div v-if="tabCheckeTab==3">
                             状态类型：
-                            <a-select :defaultValue="checkedInfo.statusChecked" @change="handleChange_status">
+                            <a-select :defaultValue="checkedInfo.statusChecked" @change="handleChange_status" style="width: 120px">
                                 <a-select-option :value="item.title" :key="item.itemId"
                                     v-for="(item) in checkedInfo.statusList">
                                     {{ item.title }}
@@ -114,7 +118,7 @@
                     { title: '案卷名称', dataIndex: 'name', },
                     { title: '案卷类型', dataIndex: 'type', },
                     { title: '主办单位', dataIndex: 'mainOff', },
-                    { title: '所在楼宇', dataIndex: 'location', },
+                    { title: '所在位置', dataIndex: 'location', },
                     { title: '当前状态', dataIndex: 'socket_status', },
                     {
                         title: '操作', dataIndex: 'operation', key: 'operation',
@@ -122,7 +126,6 @@
                     },
                 ],
                 tableData_caseBorrow: [],
-
                 //tab标签
                 tabListBtn: [
                     { label: 1, title: '全部' },
@@ -164,13 +167,13 @@
                 },
                 pagination: {
                     pageNum: 1,
-                    pageSize: 5,
+                    pageSize: 10,
                     case_type_name: '',
                     stock_status: 'ZK'
                 },
                 pagination_approve: {
                     pageNum: 1,
-                    pageSize: 5,
+                    pageSize: 10,
                 },
                 loading: false,
             }
@@ -307,7 +310,7 @@
             // 获取需审批列表
             async getApproveData(data){
                 this.loading = true;
-                const pagination = { ...this.pagination };
+                const pagination_approve = { ...this.pagination_approve };
                 let returnData_appList = await this.$api.getApproveList_Page(data);
                 console.log(returnData_appList)
                 let returnData_app = [];
@@ -333,18 +336,24 @@
                     })
                 })
                 this.tableData_setting = returnData_app;
-                pagination.total = Number(returnData_appList.data.total);
-                this.pagination = pagination;
+                pagination_approve.total = Number(returnData_appList.data.total);
+                this.pagination_approve = pagination_approve;
                 this.loading = false;
             },
             //分页切换
             handleTableChange(pagination) {
                 // console.log(pagination);
-                const pager = { ...this.pagination };
-                pager.pageNum = pagination.current;
-                pager.current = pagination.current;
-                this.pagination = pager;
-                console.log(this.pagination)
+                if(this.tabCheckeTab == 1){
+                    const pager = { ...this.pagination };
+                    pager.pageNum = pagination.current;
+                    pager.current = pagination.current;
+                    this.pagination = pager;
+                }else{
+                    const pager = { ...this.pagination_approve };
+                    pager.pageNum = pagination.current;
+                    pager.current = pagination.current;
+                    this.pagination_approve = pager;
+                }
                 if(this.tabCheckeTab == 1) this.getQueryListData(this.pagination);
                     else if(this.tabCheckeTab == 2) this.getApproveList(this.pagination_approve);
                     else if(this.tabCheckeTab == 3) 
@@ -369,7 +378,7 @@
                         name: item.case_name,
                         type: item.case_type_name,
                         mainOff: item.sa_org_name,
-                        location: ''+item.location_name+' - '+item.floor_name+' - '+item.room_name,
+                        location: ''+this.checkedDataNull(item.shale_name)+' - '+this.checkedDataNull(item.clock_id),
                         socket_status: this.stock_statusTrans(item.stock_status),
                     })
                 })
@@ -381,11 +390,11 @@
             //重置选择项
             resetSubmitData(){
                 this.pagination['pageNum'] = 1;
-                this.pagination['pageSize'] = 5;
+                this.pagination['pageSize'] = 10;
                 this.pagination['case_type_name'] = '';
                 this.pagination['stock_status'] = 'ZK';
                 this.pagination_approve['pageNum'] = 1;
-                this.pagination_approve['pageSize'] = 5;
+                this.pagination_approve['pageSize'] = 10;
                 delete this.pagination.total;
                 delete this.pagination.current;
                 delete this.pagination_approve.total;
@@ -415,6 +424,12 @@
                 })
                 this.showModel.org_flow_id = operatortData;
             },
+            // 是否为空
+            checkedDataNull(data){
+                let returnData = '';
+                if(!data) returnData = data;
+                return returnData;
+            }
         },
     }
 </script>

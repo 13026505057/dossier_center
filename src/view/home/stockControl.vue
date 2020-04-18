@@ -4,7 +4,7 @@
             <a-row :gutter="16" justify="center" class="searchBtnInfo">
                 <a-col class="gutter-row" :span="5">
                     状态类型：
-                    <a-select :defaultValue="checkedInfo.statusChecked" @change="handleChange_status">
+                    <a-select :defaultValue="checkedInfo.statusChecked" @change="handleChange_status" style="width: 120px">
                         <a-select-option :value="item.title" :key="item.itemId"
                             v-for="(item) in checkedInfo.statusList">
                             {{ item.title }}

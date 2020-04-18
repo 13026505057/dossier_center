@@ -30,31 +30,6 @@
                     </a-table>
                 </a-tab-pane>
             </a-tabs>
-            <!-- 案卷详情tab -->
-            <a-modal title="卷宗详情"
-                centered v-model="showModel.modalDetail" @ok="showModel.modalDetail = false">
-                <a-tabs :defaultActiveKey="showModel.checkedItem" tabPosition="top"
-                    style="text-align: left;" @change="changeTabItem">
-                    <a-tab-pane v-for="(item,index) in showModel.tabListBtn" :tab="'卷宗'+(index+1)" :key="item.label">
-                        <p>
-                            <span style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗名称: </span>
-                            {{ item.title }}
-                        </p>
-                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">调阅历史:</p>
-                        <a-steps :current="showModel.historyList.length" size="small" progressDot>
-                            <a-step :title="itemHistory.title" v-for="itemHistory in showModel.historyList" 
-                                :key="itemHistory.setps">
-                                <template slot="description">
-                                    <div>{{ itemHistory.name }}</div>
-                                    <div>{{ itemHistory.time }}</div>
-                                </template>
-                            </a-step>
-                        </a-steps>
-                        <p style="margin: 10px 0 0 0;font-size: 15px;font-weight: 600;">卷宗详情:</p>
-                        <p>卷宗存储位置: {{ item.location }}</p>
-                    </a-tab-pane>
-                </a-tabs>
-            </a-modal>
         </div>
     </div>
 </template>
@@ -91,15 +66,6 @@
                     case_police_nm: ''
                 },
                 loading: false,
-                //卷宗详情
-                showModel: {
-                    checkedItem: 1,
-                    modalDetail: false,
-                    //tab标签
-                    tabListBtn: [],
-                    //操作记录
-                    historyList: [],
-                }
             }
         },
         methods: {
@@ -120,17 +86,9 @@
             },
             // 切换tab标签
             changeTabItem(checkedItem){
-                if(this.showModel.modalDetail){
-                    this.getDossierData({
-                        pageNum: 1,
-                        pageSize: 100,
-                        dossier_id: this.showModel.tabListBtn[checkedItem-1].key
-                    })
-                }else{
-                    this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
-                    if(checkedItem==1) this.pagination['case_type_name'] = '';
-                    this.getQueryListData(this.pagination);
-                }
+                this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
+                if(checkedItem==1) this.pagination['case_type_name'] = '';
+                this.getQueryListData(this.pagination);
             },
             //获取在库案件列表
             async getQueryListData(dataInfo){
@@ -158,40 +116,9 @@
                 this.pagination = pagination;
                 this.loading = false;
             },
-            // 获取卷宗操作记录
-            async getDossierData(dataInfo){
-                let returnData_log = await this.$api.getCaseLogList_Page(dataInfo);
-                console.log(returnData_log)
-                let historyData = [];
-                returnData_log.data.list.forEach((item,index)=>{
-                    historyData.push({
-                        key: item.dossier_log_id,
-                        title: item.result,
-                        step: index,
-                        time: item.create_time,
-                        name: item.organize_user_name
-                    })
-                })
-                this.showModel.historyList = historyData;
-            },
             // 展示详情
             showCaseDetail(e){
-                let dossierData = [];
-                e.listData.forEach((item,index)=>{
-                    dossierData.push({
-                        key: item.dossier_id,
-                        label: index+1,
-                        title: item.dossier_name,
-                        location: ''+item.location_name+' - '+item.floor_name+' - '+item.room_name+'',
-                    })
-                })
-                this.getDossierData({
-                    pageNum: 1,
-                    pageSize: 100,
-                    dossier_id: e.listData[0].dossier_id
-                })
-                this.showModel.tabListBtn = dossierData;
-                this.showModel.modalDetail = true;
+                this.$router.push({ path: '/dossierDetail',query: { detailDom: e } })
             },
             //  导出查询条件execle
             stockExport() {

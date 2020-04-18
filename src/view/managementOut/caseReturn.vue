@@ -52,7 +52,7 @@
                 ],
                 pagination: {
                     pageNum: 1,
-                    pageSize: 5,
+                    pageSize: 10,
                     case_type_name: '',
                     stock_status: ''
                 },
