@@ -378,7 +378,7 @@
                         name: item.case_name,
                         type: item.case_type_name,
                         mainOff: item.sa_org_name,
-                        location: ''+this.checkedDataNull(item.shale_name)+' - '+this.checkedDataNull(item.clock_id),
+                        location: ''+this.checkedDataNull(item.shale_name)+' - '+this.checkedDataNull(item.lock_id),
                         socket_status: this.stock_statusTrans(item.stock_status),
                     })
                 })
@@ -427,7 +427,7 @@
             // 是否为空
             checkedDataNull(data){
                 let returnData = '';
-                if(!data) returnData = data;
+                if(data) returnData = data;
                 return returnData;
             }
         },
