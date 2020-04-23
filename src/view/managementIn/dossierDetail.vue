@@ -62,8 +62,8 @@
                         title: item.result,
                         step: index+1,
                         time: item.create_time,
-                        name_cz: item.organize_user_name,
-                        name_cb: item.operate_user_name
+                        name_cz: item.operate_user_name,
+                        name_cb: item.organize_user_name
                     })
                 })
                 this.historyList = historyData;
@@ -78,7 +78,7 @@
                         title: item.dossier_name,
                         location: ''+this.checkedNull(item.location_name)+' - '+this.checkedNull(item.floor_name)+' - '+
                             this.checkedNull(item.room_name)+' - '+this.checkedNull(item.line_name)+' - '+
-                            this.checkedNull(item.shale_name)+' - '+this.checkedNull(item.clock_id),
+                            this.checkedNull(item.shale_name)+' - '+this.checkedNull(item.lock_id),
                     })
                 })
                 this.getDossierData({

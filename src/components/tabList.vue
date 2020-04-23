@@ -45,7 +45,7 @@
                         childrenList: [
                             { icon: 'icon-ziyuan',title: '全部',keyId: 'dossierScreen' },
                             { icon: 'icon-dairuku1',title: '待入库',keyId: 'caseWaiting' },
-                            { icon: 'icon-ruku',title: '应入库',keyId: 'caseReceived' },
+                            // { icon: 'icon-ruku',title: '应入库',keyId: 'caseReceived' },
                         ]
                     },
                     {

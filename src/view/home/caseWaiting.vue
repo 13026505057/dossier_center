@@ -20,7 +20,7 @@
                 <a-tab-pane v-for="(item) in tabListBtn" :tab="item.title" :key="item.label">
                     <a-table bordered :columns="columns_criminal" :pagination="pagination"
                         :loading="loading" :data-source="tableData_criminal" size="middle"
-                        @change="handleTableChange" class="tableCaseData">
+                        @change="handleTableChange" class="tableCaseData" @expand="expandedRowItem">
                         <a-table slot="expandedRowRender" :columns="innerColumns" slot-scope="record"
                             :dataSource="record.listData" :pagination="false" size="middle">
                             <template slot="operation" slot-scope="text,record">
@@ -32,9 +32,9 @@
                 </a-tab-pane>
             </a-tabs>
         </div>
-        <div id="printAreaInfo1">
-            <img id="canvasCode1"/>
-            <img id="tipsContent1"/>
+        <div id="printAreaInfo">
+            <img id="canvasCode"/>
+            <img id="tipsContent"/>
         </div>
     </div>
 </template>
@@ -66,7 +66,7 @@
                     pageNum: 1,
                     pageSize: 10,
                     case_type_name: '',
-                    stock_status: 'DRK',
+                    case_status: '210,115',
                     case_name: '',
                     case_police_nm: ''
                 },
@@ -74,9 +74,9 @@
                 //案卷列表
                 innerColumns:[
                     { title: '案卷名称', dataIndex: 'dossier_name' },
-                    { title: '创建日期', dataIndex: 'in_time' },
+                    { title: '日期', dataIndex: 'dossier_create_time' },
                     { title: '案卷状态', dataIndex: 'result' },
-                    { title: '办案民警', dataIndex: 'in_cz_user_name' },
+                    { title: '办案民警', dataIndex: 'organize_user_name' },
                     {
                     title: '操作', dataIndex: 'operation', key: 'operation',
                         scopedSlots: { customRender: 'operation' },
@@ -106,23 +106,42 @@
                 if(checkedItem==1) this.pagination['case_type_name'] = '';
                 this.getQueryListData(this.pagination);
             },
-            //获取在库案件列表
+            //展开获取子集
+            async expandedRowItem(state,data){
+                console.log(state,data)
+                delete this.pagination.total;
+                if(state){
+                    const returnData = await this.$api.getQueryCaseList_Page({
+                        pageNum:1,
+                        pageSize: 100,
+                        case_id: data.key
+                    })
+                    const dataInfo = [];
+                    returnData.data.list.forEach(dossierKey=>{
+                        dossierKey.key = dossierKey.dossier_id;
+                        dataInfo.push(dossierKey)
+                    })
+                    this.tableData_criminal[data.index].listData = dataInfo;
+                }
+            },
+            //获取待入库案件列表
             async getQueryListData(dataInfo){
                 this.loading = true;
-                const queryListData = await this.$api.getStockCaseList_Page(dataInfo);
+                const queryListData = await this.$api.getCaseList_Page(dataInfo);
                 // console.log(queryListData);
                 const pagination = { ...this.pagination };
                 const queryCaseList = queryListData.data.list;
                 const queryData = [];
-                queryCaseList.forEach(item=>{
+                queryCaseList.forEach((item,index)=>{
                     queryData.push({
                         key: item.case_id,
+                        index: index,
                         caseName: item.case_name,
                         typeCase: item.case_type_name,
                         caseNumber: item.case_police_nm,
                         caseFrom: item.case_from,
                         acceptUnit: item.sa_org_name,
-                        listData: item.stockList,
+                        listData: [],
                         hostUnit: item.organiza_org_name,
                         hostPeo: item.organiza_user_name,
                     })
@@ -144,7 +163,7 @@
             async printDeta(value,text,tipsContent){
                 //生成条形码
                 console.log(value,text,tipsContent)
-                JsBarcode("#canvasCode1", value, {
+                JsBarcode("#canvasCode", value, {
                     format: "CODE128",//选择要使用的条形码类型
                     width:2,//设置条之间的宽度
                     height:50,//高度
@@ -155,7 +174,7 @@
                     textAlign:"center",//设置文本的水平对齐方式
                     textPosition:"bottom",//设置文本的垂直位置
                     textMargin:5,//设置条形码和文本之间的间距
-                    fontSize:15,//设置文本的大小
+                    fontSize:13,//设置文本的大小
                     background:"#fff",//设置条形码的背景
                     lineColor:"#000",//设置条和文本的颜色。
                     margin:0,//设置条形码周围的空白边距
@@ -163,7 +182,7 @@
                     marginLeft:10,
                 });
                 //备注信息
-                JsBarcode("#tipsContent1", value, {
+                JsBarcode("#tipsContent", value, {
                     format: "CODE128",//选择要使用的条形码类型
                     width:2,//设置条之间的宽度
                     height:0,//高度
@@ -174,7 +193,7 @@
                     textAlign:"center",//设置文本的水平对齐方式
                     textPosition:"bottom",//设置文本的垂直位置
                     textMargin:3,//设置条形码和文本之间的间距
-                    fontSize:16,//设置文本的大小
+                    fontSize:12,//设置文本的大小
                     background:"#fff",//设置条形码的背景
                     lineColor:"#000",//设置条和文本的颜色。
                     margin:0,//设置条形码周围的空白边距
@@ -228,8 +247,18 @@
                 }
             }
         }
-        #printAreaInfo1{
+        #printAreaInfo{
             display: none
+        }
+    }
+    #printAreaInfo{
+        text-align: center;
+        #canvasCode,#tipsContent{
+            display: flex;
+            margin: 0 auto;
+        }
+        .canvasImg{
+            margin: 0 auto;
         }
     }
 </style>

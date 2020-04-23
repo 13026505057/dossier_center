@@ -146,12 +146,11 @@
                     textAlign:"center",//设置文本的水平对齐方式
                     textPosition:"bottom",//设置文本的垂直位置
                     textMargin:5,//设置条形码和文本之间的间距
-                    fontSize:15,//设置文本的大小
+                    fontSize:13,//设置文本的大小
                     background:"#fff",//设置条形码的背景
                     lineColor:"#000",//设置条和文本的颜色。
                     margin:0,//设置条形码周围的空白边距
                     marginBottom:5,
-                    marginLeft:10,
                 });
                 //备注信息
                 JsBarcode("#tipsContent", value, {
@@ -165,7 +164,7 @@
                     textAlign:"center",//设置文本的水平对齐方式
                     textPosition:"bottom",//设置文本的垂直位置
                     textMargin:3,//设置条形码和文本之间的间距
-                    fontSize:16,//设置文本的大小
+                    fontSize:12,//设置文本的大小
                     background:"#fff",//设置条形码的背景
                     lineColor:"#000",//设置条和文本的颜色。
                     margin:0,//设置条形码周围的空白边距
@@ -307,15 +306,17 @@
             }
         }
         #printAreaInfo{
-            display: none;
-            text-align: center;
-            font-size: 15px;
-            font-weight: 600;
-            font-family:"fantasy";
-            #canvasCode,#tipsContent{
-                width: 100%;
-                height: 100%;
-            }
+           display: none; 
+        }
+    }
+    #printAreaInfo{
+        text-align: center;
+        #canvasCode,#tipsContent{
+            display: flex;
+            margin: 0 auto;
+        }
+        .canvasImg{
+            margin: 0 auto;
         }
     }
 </style>
