@@ -64,7 +64,15 @@ export default {
             method: 'post',
             data
         })
-    },  
+    },
+    //待入库案件分页查询
+    getWaitCaseList_Page(data){
+        return service({
+            url: '/juanzong/cases/cases/getInStock',
+            method: 'post',
+            data
+        })
+    }, 
     //库存卷宗分页查询
     getStockCaseList_Page(data){
         return service({

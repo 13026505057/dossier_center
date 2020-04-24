@@ -127,7 +127,7 @@
             //获取待入库案件列表
             async getQueryListData(dataInfo){
                 this.loading = true;
-                const queryListData = await this.$api.getCaseList_Page(dataInfo);
+                const queryListData = await this.$api.getWaitCaseList_Page(dataInfo);
                 // console.log(queryListData);
                 const pagination = { ...this.pagination };
                 const queryCaseList = queryListData.data.list;
