@@ -35,7 +35,7 @@
             async login(){
                 let passWordData = this.loginData.pass_word;
                 const tokenInfo = await this.$api.loginData({
-                    user_name: this.loginData.pass_word,
+                    user_name: this.loginData.user_name,
                     pass_word: this.$md5(passWordData)
                 });
                 if(tokenInfo.code == '0'){
