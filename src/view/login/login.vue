@@ -45,11 +45,10 @@
                     sessionStorage.removeItem('openKeys');
                     sessionStorage.setItem('checkedItem','homeScreen');
                     let roleList = ['none'];
-                    if (tokenInfo.data.user.userRole.length>0)
+                    if (tokenInfo.data.user.userRole.length>0) {
                         roleList = [];
-                        tokenInfo.data.user.userRole.forEach((item)=>{
-                            roleList.push(item.role_id)
-                        })
+                        tokenInfo.data.user.userRole.forEach((item)=> roleList.push(item.role_id) )
+                    }
                     localStorage.setItem('roleList',JSON.stringify(roleList));
                 }else{
                     message.error(tokenInfo.msg);
@@ -99,7 +98,6 @@
                         ...lesortData_out
                     ]
                 };
-                console.log(setLosort_outIn)
                 sessionStorage.setItem('setLosort_outIn',JSON.stringify(setLosort_outIn));
                 
                 //办案民警统计数据
@@ -112,7 +110,6 @@
                         case: Number(item.zongshu),
                     })
                 });
-                console.log(maxNum)
                 let setLosort_police = {
                     data: lesortData_police,
                     maxNum: maxNum
@@ -123,7 +120,6 @@
             async getLesortTypeInfo(){
                 //案卷类型
                 let returnData_type = await this.$api.getLesortTypeInfo();
-                console.log(returnData_type)
                 let lesortData_type = [];
                 let typeTotal = 0;
                 returnData_type.data.caseStatuses.forEach((item)=>{

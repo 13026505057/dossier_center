@@ -4,15 +4,14 @@ import router from '@/router'
 import { message } from 'ant-design-vue';
 
 const service = axios.create({
-    // baseURL: 'http://106.12.57.57:8080',  // api的base_url 
+    baseURL: 'http://106.12.68.167',  // api的base_url 
     // baseURL: 'http://192.168.2.99:8080',
-    baseURL: 'http://56.212.7.252:80',
+    // baseURL: 'http://56.212.7.252:80',
     // baseURL: 'http://localhost:8080',
     timeout: 5000  // 请求超时时间
 })
 
 service.interceptors.request.use(config => {
-    console.log(config)
     sessionStorage.setItem('baseURL',config.baseURL)
     if (sessionStorage.getItem("token")) {
         config.headers['kf-token'] = sessionStorage.getItem("token");
@@ -41,10 +40,10 @@ service.interceptors.response.use(
                 router.push('./login')
             },3000)
             
-        }else if(response.data.code == '601'){
-            message.info(response.data.msg);
         }else if(response.data.code == '500'){
             message.info('操作异常或信息填写错误，请重新再试一次');
+        }else {
+            message.info(response.data.msg);
         }
     },
     error => {  //响应错误处理

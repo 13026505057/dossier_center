@@ -191,7 +191,8 @@
             const checkedItem = sessionStorage.getItem('checkedItem');
             if(checkedItem) this.checkedItem[0] = checkedItem;
             // 权限认证
-            let roleData = JSON.parse(localStorage.getItem('roleList'));
+            // let roleData = JSON.parse(localStorage.getItem('roleList'));
+            let roleData = ['1'];
             this.setRoleData(roleData);
             //统计数据(出入库/主办民警)
             this.resetLosortData();

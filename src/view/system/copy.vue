@@ -9,7 +9,6 @@
                 @change="handleTableChange" :loading="loading">
                 <template slot="operation" slot-scope="record">
                     <a-button class="editDate" @click="editItemFlow(record,1)" size="small">修改</a-button>
-                    <a-button class="editDate" @click="addItemFlow(record,3)" size="small">新增</a-button>
                     <a-popconfirm title="确定移除?"
                         @confirm="deleteItem(record)" okText="确认" cancelText="取消">
                         <a-button class="editDate" size="small">移除</a-button>
@@ -32,7 +31,7 @@
                 </template>
                 </a-table>
             </a-table>
-            <!-- 新增批流信息 -->
+            <!-- 新增部门 -->
             <a-modal :title="showModel.captionsTitle"
                 centered v-model="showModel.modalInput" @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo">
                 <div style="display:table;width: 100%;margin-bottom: 10px">
@@ -58,6 +57,7 @@
                     </span>
                     <a-button type="link" @click="addApprovalItem" :disabled="submitDataInfo['approveDisBtn']"
                         v-if="submitDataInfo['org_flow_step']==0">添加流程</a-button>
+                    <a-button type="link" @click="addApprovalItem" v-else>添加流程</a-button>
                 </div>
                 <a-timeline mode="alternate">
                     <a-timeline-item v-for="(item,index) in submitDataInfo.approveList" :key="index">
@@ -93,47 +93,14 @@
                     </a-timeline-item>
                 </a-timeline>
             </a-modal>
-            <!-- 新增审批流程(单) -->
-            <a-modal :title="showModel.captionsTitle" centered v-model="showModel.modalAdd_single" 
-                @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo_single">
-                <div style="margin-bottom: 10px">
-                    <span>定义审批流程：</span>
-                </div>
-                <a-timeline>
-                    <a-timeline-item>
-                        <div style="margin-bottom: 10px;display:table;width:100%;">
-                            <span style="display:table-cell;">{{ approveData_single['approve_name'] }}: </span>
-                        </div>
-                        <div>
-                            <!--审批流程名称-->
-                            <a-input :placeholder="'请输入审批流程'+approveData_single['approve_name']+'名称'" allowClear 
-                                v-model="approveData_single['approve_name']" style="width: 55%"/>
-                            <!--审批流程类型-->
-                            <a-select style="width: 40%;" @change="checkedDepartmentLine_single($event)" placeholder="请选择类型"
-                                v-model="approveData_single.approve_type">
-                                <a-select-option v-for="item in addOperatorItem.departmentLineList"
-                                    :value="item.flow_approve_type_code" :key="item.flow_approve_type_id">
-                                    {{ item.flow_approve_type_name }}
-                                </a-select-option>
-                            </a-select>
-                            <!--审批人名称-->
-                            <a-select style="margin-top: 10px;width: 150px;" @change="checkedDepartment" mode="multiple"
-                                placeholder="请选择审批人名称" v-model="approveData_single.approve_userId" optionLabelProp="label">
-                                <a-select-option v-for="item in approveData_single.approve_userDepartment"
-                                    :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
-                                    :key="item.flow_approve_type_id"> 
-                                    {{ item.flow_approve_type_name }}
-                                </a-select-option>
-                            </a-select>
-                        </div>
-                    </a-timeline-item>
-                </a-timeline>
-            </a-modal>
+
             <!-- 修改审批流程(单) -->
             <a-modal :title="showModel.captionsTitle" centered v-model="showModel.modalInput_single" 
-                @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo_single">
+                @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo">
                 <div style="margin-bottom: 10px">
-                    <span>定义审批流程：</span>
+                    <span>
+                        定义审批流程： 
+                    </span>
                 </div>
                 <a-timeline>
                     <a-timeline-item>
@@ -182,8 +149,7 @@
                     captionsTitle: '',
                     modalInput: false,
                     //单项修改
-                    modalInput_single: false,
-                    modalAdd_single: false
+                    modalInput_single: false
                 },
                 //提交信息 
                 submitDataInfo: {
@@ -421,7 +387,6 @@
                     { itemId: 0, fun:'addItem' },
                     { itemId: 1, fun:'comfirmEditFlow' },
                     { itemId: 2, fun:'comfirmEditApp' },
-                    { itemId: 3, fun:'andItemCase' },
                 ];
                 listData.map((item)=>{
                     if(item.itemId == itemId){
@@ -449,16 +414,11 @@
                 })
                 this.showModel.modalInput = true;
             },
-            addItemFlow(e,order){
-                this.showModel.captionsTitle = '新增审批流程信息';
-                this.submitDataInfo.org_flow_step = order;
-                this.showModel.modalAdd_single = true;
-                this.submitDataInfo['org_flow_id'] = e.key
-            },
             // 修改审批流程信息
             editItemApp(e,order){
                 this.showModel.captionsTitle = '修改审批流程信息';
                 this.submitDataInfo.org_flow_step = order;
+                console.log(e)
                 this.approveData_single = e;
                 let listData_type = ['ZDR','ZDBM','ZDJG'];
                 let listData_list = ['departmentList_man','departmentList_opera','departmentList_organ'];
@@ -477,7 +437,7 @@
                     org_flow_name: this.submitDataInfo.org_flow_name,
                     org_flow_type: this.submitDataInfo.org_flow_type,
                 }).then(()=>{
-                    this.showModel.modalEdit = false;
+                    this.showModel.modalInput = false;
                     this.getApprovalList(this.pagination);
                     setTimeout(()=>{
                         this.resetSubmitInfo();
@@ -513,7 +473,7 @@
                 this.submitDataInfo['org_flow_id'] = '';
                 this.submitDataInfo['org_flow_name'] = '';
                 this.submitDataInfo['org_flow_type'] = '';
-                this.submitDataInfo['approveDisBtn'] = true;
+                // this.submitDataInfo['approveDisBtn'] = true;
                 this.submitDataInfo['approveList'] = [{
                     approve_name: '',
                     approve_list: [],
@@ -522,21 +482,6 @@
                     attribute_order: 1
                 }];
                 this.contentNum = 0
-                this.showModel.modalEdit = false
-            },
-            resetSubmitInfo_single(){
-                this.approveData_single = {
-                    approve_name: '',
-                    approve_type: '',
-                    approve_list: [],
-                    approve_userId: [],
-                    approve_userDepartment: [],
-                    attribute_order: 1
-                }
-            },
-            andItemCase(){
-                const listData = this.approveData_single;
-                this.recurTest(listData,0);
             },
             //新增审批流
             addInfo(){
@@ -564,9 +509,7 @@
                     if(++index == this.submitDataInfo['approveList'].length){
                         if(returnData.code == '0'){
                             this.showModel.modalInput = false;
-                            this.showModel.modalAdd_single = false;
                             this.resetSubmitInfo();
-                            this.resetSubmitInfo_single();
                             this.getApprovalList(this.pagination);
                         }
                     }else{

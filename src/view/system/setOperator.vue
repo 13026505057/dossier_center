@@ -269,6 +269,7 @@
             },
             async addItem(){
                 this.submitDataInfo.role_ids = this.addOperatorItem.checkedList.join();
+                this.submitDataInfo.pass_word = this.$md5(this.submitDataInfo.pass_word)
                 const returnData = await this.$api.addOperatorData(this.submitDataInfo);
                 this.showModel.modalFrom = false;
                 this.resetSubmitInfo();
