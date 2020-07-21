@@ -28,21 +28,6 @@
                 lesortData_police: 'lesortData_police'
             }),
         },
-        methods: {
-            handleChange(e,a){
-                console.log(e,a)
-            },
-            confirmData(date, dateString) {
-                console.log(date, dateString);
-            },
-            confirmSearch(dom){
-                console.log(this['case'+dom])
-            }
-        },
-        mounted() {
-            console.log(this.lesortData_police)
-            console.log(window.screen.height - 66 -40 -40 -33)
-        },
     }
 </script>
 

@@ -94,7 +94,7 @@
             return{
                 tabCheckeTab: 0,
                 showModel: {
-                    modalAppreciate: false,
+                    modalAppreciate: true,
                     org_flow_id: [],
                 },
                 caseDataInfoList: [
@@ -324,14 +324,6 @@
                         case_type_name: item.userFlowDossierList[0].casesList[0].case_type_name,
                         create_time: item.create_time,
                         create_user_name: item.create_user_name,
-                        sa_org_name: item.userFlowDossierList[0].casesList[0].sa_org_name,
-                        case_status_name: item.userFlowDossierList[0].casesList[0].case_status_name,
-                        location: ``+item.userFlowDossierList[0].stockList[0].location_name+` - 
-                            `+item.userFlowDossierList[0].stockList[0].floor_name+` - 
-                            `+item.userFlowDossierList[0].stockList[0].room_name+` - 
-                            `+item.userFlowDossierList[0].stockList[0].shale_name+``,
-                        borrow_time: item.userFlowDossierList[0].stockList[0].borrow_time,
-                        flow_type_name: item.userFlowList[0].flow_type_name,
                         is_approved: item.is_approved
                     })
                 })

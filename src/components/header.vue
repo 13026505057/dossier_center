@@ -128,6 +128,7 @@
             background-color: @theme;
             display: table;
             color: white;
+            width: 100%;
             .headerLeft{
                 text-align: left;
                 letter-spacing: 2px;

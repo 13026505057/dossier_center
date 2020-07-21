@@ -55,9 +55,9 @@
                     <a-checkbox-group :options="addOperatorItem.roleList"
                         v-model="addOperatorItem.checkedList" @change="onChange">
                         <template slot="key" slot-scope="option">
-                            <span @click="consoleData(option)">{{ option.title }}</span>
+                            <span>{{ option.title }}</span>
                         </template>
-                        <!--<span style="color: red" slot="key" slot-scope="title">{{title}}</span>-->
+                        <!-- <span style="color: red" slot="key" slot-scope="title">{{title}}</span> -->
                     </a-checkbox-group>
                 </div>
             </a-modal>
@@ -129,9 +129,6 @@
                     indeterminate: false,
                     checkAll: e.target.checked,
                 });
-            },
-            consoleData(e){
-                console.log(e)
             },
             handleTableChange(pagination) {
                 // console.log(pagination);
@@ -215,9 +212,7 @@
                 typeData.forEach((item,index)=>{
                    this.submitDataInfo[typeData[index]] = e[typeData_cell[index]];
                 })
-                if(e['userDept'].length>0){
-                    this.submitDataInfo['dept_ids'] = e['userDept'][0].dept_id;
-                }
+                if(e['userDept'].length>0) this.submitDataInfo['dept_ids'] = e['userDept'][0].dept_id
                 const userRoleList = e['userRole'];
                 if(userRoleList.length>0){
                     const roleList = [];
@@ -232,7 +227,6 @@
             //确认提交修改
             comfirmEditItem(){
                 this.submitDataInfo.role_ids = this.addOperatorItem.checkedList.join();
-                console.log(this.submitDataInfo)
                 this.$api.editOperatorData(this.submitDataInfo).then(()=>{
                     this.showModel.modalFrom = false;
                     this.getOperatorList(this.pagination);
@@ -243,20 +237,12 @@
             },
             //确定按钮
             confirmBtn(){
-                if(this.showModel.confirmType){
-                    this.addItem();
-                }else{
-                    this.comfirmEditItem();
-                }
+                if(this.showModel.confirmType) this.addItem();
+                    else this.comfirmEditItem();
             },
             //重置表单
             resetSubmitInfo(){
-                delete this.submitDataInfo.user_id;
-                this.submitDataInfo['user_name'] = '';
-                this.submitDataInfo['user_true_name'] = '';
-                this.submitDataInfo['pass_word'] = '';
-                this.submitDataInfo['dept_ids'] = '';
-                this.submitDataInfo['role_ids'] = '';
+                Object.keys(this.submitDataInfo).map(item=> this.submitDataInfo[item] = '' )
                 this.addOperatorItem['checkedList'] = [];
                 this.showModel['checkAll'] = false;
                 this.showModel['indeterminate'] = true;
@@ -268,16 +254,13 @@
                 this.showModel.captionsTitleInfo = '新增操作员';
             },
             async addItem(){
-                this.submitDataInfo.role_ids = this.addOperatorItem.checkedList.join();
-                this.submitDataInfo.pass_word = this.$md5(this.submitDataInfo.pass_word)
-                const returnData = await this.$api.addOperatorData(this.submitDataInfo);
+                let dataInfo = { ...this.submitDataInfo }
+                dataInfo.role_ids = this.addOperatorItem.checkedList.join();
+                dataInfo.pass_word = this.$md5(this.submitDataInfo.pass_word)
+                const returnData = await this.$api.addOperatorData(dataInfo);
                 this.showModel.modalFrom = false;
                 this.resetSubmitInfo();
-                if(returnData){
-                    if(returnData.code == '0'){
-                        this.getOperatorList(this.pagination);
-                    }
-                }
+                if(returnData && returnData.code == '0') this.getOperatorList(this.pagination)
             }
         },
     }

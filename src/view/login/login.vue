@@ -106,7 +106,7 @@
                 returnData_lesort.data.casePolices.forEach((item)=>{
                     if(maxNum < Number(item.zongshu)) maxNum = Number(item.zongshu)
                     lesortData_police.push({
-                        name: item.user_name,
+                        name: item.user_true_name,
                         case: Number(item.zongshu),
                     })
                 });
@@ -286,7 +286,7 @@
         background-color: @bgBtnColor;
         h3.captionTitle{
             color: white;
-            font-size: 35px;
+            font-size: 40px;
             font-weight: 600;
             padding: 5% 0;
             img.logoIcon{
@@ -319,14 +319,15 @@
                     padding: 35px 20px;
                     background-color: white;
                     border-radius: 5px;
+                    max-width: 500px;
                     .passWordBtn{
-                        margin: 15px 0;
+                        margin: 30px 0;
                     }
                     span.loginBtn{
                         background-color: @bgBtnColor;
                         display: block;
                         border-radius: 5px;
-                        padding: 5px;
+                        padding: 10px 5px;
                         text-align: center;
                         color: white;
                     }

@@ -41,8 +41,7 @@
                     </span>
                     <a-input placeholder="审批流名称" allowClear v-model="submitDataInfo['org_flow_name']"
                         style="display:table-cell;width: 35%;padding-right: 3%" :disabled="!submitDataInfo['approveDisBtn']"/>
-                    <a-select style="width: 100px" @change="checkedDepartment" 
-                        :disabled="!submitDataInfo['approveDisBtn']"
+                    <a-select style="width: 100px" :disabled="!submitDataInfo['approveDisBtn']"
                         placeholder="请选择类型" v-model="submitDataInfo.org_flow_type">
                         <a-select-option v-for="item in addOperatorItem.departmentList" 
                             :value="item.flow_type_id" :key="item.flow_type_id"> {{ item.flow_type_name }}
@@ -80,7 +79,7 @@
                                 </a-select-option>
                             </a-select>
                             <!--审批人名称-->
-                            <a-select style="margin-top: 10px;width: 150px;" @change="checkedDepartment" mode="multiple"
+                            <a-select style="margin-top: 10px;width: 150px;" mode="multiple"
                                 placeholder="请选择审批人名称" v-model="item.approve_userId" optionLabelProp="label"
                                 :disabled="submitDataInfo['approveDisBtn']">
                                 <a-select-option v-for="item in item.approve_userDepartment"
@@ -117,7 +116,7 @@
                                 </a-select-option>
                             </a-select>
                             <!--审批人名称-->
-                            <a-select style="margin-top: 10px;width: 150px;" @change="checkedDepartment" mode="multiple"
+                            <a-select style="margin-top: 10px;width: 150px;" mode="multiple"
                                 placeholder="请选择审批人名称" v-model="approveData_single.approve_userId" optionLabelProp="label">
                                 <a-select-option v-for="item in approveData_single.approve_userDepartment"
                                     :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
@@ -153,7 +152,7 @@
                                 </a-select-option>
                             </a-select>
                             <!--审批人名称-->
-                            <a-select style="margin-top: 10px;width: 150px;" @change="checkedDepartment" mode="multiple"
+                            <a-select style="margin-top: 10px;width: 150px;" mode="multiple"
                                 placeholder="请选择审批人名称" v-model="approveData_single.approve_userId" optionLabelProp="label">
                                 <a-select-option v-for="item in approveData_single.approve_userDepartment"
                                     :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
@@ -170,6 +169,24 @@
 </template>
 
 <script>
+    const initSubmitInfo = ()=>{
+        let dataInfo = {
+            org_flow_step: 0,
+            org_flow_id: '',
+            org_flow_name: '',
+            org_flow_type: '',
+            approveDisBtn: true,
+            approveList: [{
+                approve_name: '',
+                approve_type: '',
+                approve_userDepartment: [],
+                approve_list: [],
+                approve_userId: [],
+                attribute_order: 1
+            }],
+        }
+        return dataInfo
+    }
     export default {
         data(){
             return{
@@ -186,21 +203,7 @@
                     modalAdd_single: false
                 },
                 //提交信息 
-                submitDataInfo: {
-                    org_flow_step: 0,
-                    org_flow_id: '',
-                    org_flow_name: '',
-                    org_flow_type: '',
-                    approveDisBtn: true,
-                    approveList: [{
-                        approve_name: '',
-                        approve_type: '',
-                        approve_userDepartment: [],
-                        approve_list: [],
-                        approve_userId: [],
-                        attribute_order: 1
-                    }],
-                },
+                submitDataInfo: initSubmitInfo(),
                 contentNum: 0, //提交流程下标
                 //单项修改
                 approveData_single: {
@@ -240,31 +243,23 @@
         methods: {
             //选择审批流程类型
             checkedDepartmentLine(value,index_o){
-                console.log(value)
                 this.submitDataInfo.approve_type = value;
                 const listData_type = ['ZDR','ZDBM','ZDJG'];
                 const listData_list = ['departmentList_man','departmentList_opera','departmentList_organ'];
                 listData_type.forEach((item,index)=>{
-                    if(item == value){
-                        this.submitDataInfo.approveList[index_o].approve_userDepartment = this.addOperatorItem[listData_list[index]];
-                    }
+                    if(item == value) this.submitDataInfo.approveList[index_o].approve_userDepartment = this.addOperatorItem[listData_list[index]];
                 })
             },
             //审批流程类型(单)
             checkedDepartmentLine_single(value){
-                console.log(value)
-                // this.approveData_single.approve_list = [];
+                this.approveData_single.approve_list = [];
+                this.approveData_single.approve_userId = [];
                 this.approveData_single.approve_type = value;
                 const listData_type = ['ZDR','ZDBM','ZDJG'];
                 const listData_list = ['departmentList_man','departmentList_opera','departmentList_organ'];
                 listData_type.forEach((item,index)=>{
-                    if(item == value){
-                        this.approveData_single.approve_userDepartment = this.addOperatorItem[listData_list[index]];
-                    }
+                    if(item == value) this.approveData_single.approve_userDepartment = this.addOperatorItem[listData_list[index]];
                 })
-            },
-            checkedDepartment(value){
-                console.log(value)
             },
             //分页
             handleTableChange(pagination) {
@@ -378,7 +373,6 @@
                     approve_type: '',
                     attribute_order: this.submitDataInfo['approveList'].length+1
                 })
-                console.log(this.submitDataInfo['approveList'])
             },
             //从新增审批流程中移除
             removeByList(index){
@@ -387,11 +381,9 @@
                 }else if(this.submitDataInfo.org_flow_step==2){
                     console.log('移除审批流程')
                 }
-                console.log(this.submitDataInfo.approveList)
             },
             // 移除审批流
             async deleteItem(e){
-                console.log(e)
                 const returnData = await this.$api.deleteApproveFlowData({ org_flow_id: e.key });
                 if(returnData){
                     if(returnData.code == '0'){
@@ -417,17 +409,13 @@
                 }
             },
             confirmBtn(itemId){
-                const listData = [
-                    { itemId: 0, fun:'addItem' },
-                    { itemId: 1, fun:'comfirmEditFlow' },
-                    { itemId: 2, fun:'comfirmEditApp' },
-                    { itemId: 3, fun:'andItemCase' },
-                ];
-                listData.map((item)=>{
-                    if(item.itemId == itemId){
-                        this[item['fun']]();
-                    }
-                })
+                const listData = {
+                    0: "addItem",
+                    1: "comfirmEditFlow",
+                    2: "comfirmEditApp",
+                    3: "andItemCase"
+                }
+                this[listData[itemId]]()
             },
             // 修改审批流信息
             editItemFlow(e,order){
@@ -471,17 +459,15 @@
             },
             //确认提交修改审批流信息
             comfirmEditFlow(){
-                console.log(this.submitDataInfo);
-                this.$api.editApproveFlowData({
+                let dataInfo = {
                     org_flow_id: this.submitDataInfo.org_flow_id,
                     org_flow_name: this.submitDataInfo.org_flow_name,
-                    org_flow_type: this.submitDataInfo.org_flow_type,
-                }).then(()=>{
+                    org_flow_type: this.submitDataInfo.org_flow_type
+                }
+                this.$api.editApproveFlowData(dataInfo).then(()=>{
                     this.showModel.modalEdit = false;
                     this.getApprovalList(this.pagination);
-                    setTimeout(()=>{
-                        this.resetSubmitInfo();
-                    },500)
+                    this.resetSubmitInfo();
                 })
             },
             //确认提交修改
@@ -491,36 +477,24 @@
                     approve_name: this.approveData_single.approve_name,
                     approve_type: this.approveData_single.approve_type,
                 }).then(()=>{
-                    let user_list = [];
-                    this.approveData_single.approve_list.forEach(item=>{
-                        user_list.push(item.id)
-                    })
+                    // let user_list = [];
+                    // console.log(this.approveData_single.approve_list)
+                    // this.approveData_single.approve_list.forEach(item=>{
+                    //     user_list.push(item.id)
+                    // })
                     this.$api.editApproveManData({
                         approve_id: this.approveData_single.key,
-                        ids: user_list.join()
+                        ids: this.approveData_single.approve_userId.join()
                     }).then(()=>{
                         this.showModel.modalInput_single = false;
                         this.getApprovalList(this.pagination);
-                        setTimeout(()=>{
-                            this.resetSubmitInfo();
-                        },500)
+                        this.resetSubmitInfo();
                     })
                 })
             },
             //重置表单
             resetSubmitInfo(){
-                this.submitDataInfo['org_flow_step'] = 0;
-                this.submitDataInfo['org_flow_id'] = '';
-                this.submitDataInfo['org_flow_name'] = '';
-                this.submitDataInfo['org_flow_type'] = '';
-                this.submitDataInfo['approveDisBtn'] = true;
-                this.submitDataInfo['approveList'] = [{
-                    approve_name: '',
-                    approve_list: [],
-                    approve_userId: [],
-                    approve_type: '',
-                    attribute_order: 1
-                }];
+                initSubmitInfo()
                 this.contentNum = 0
                 this.showModel.modalEdit = false
             },
@@ -543,6 +517,7 @@
                 this.showModel.captionsTitle = '新增审批流信息';
                 this.showModel.modalInput = true;
             },
+            // 确认提交--新增审批流
             addItem(){
                 const listData = this.submitDataInfo['approveList'];
                 this.recurTest(listData[0],0);
@@ -569,9 +544,7 @@
                             this.resetSubmitInfo_single();
                             this.getApprovalList(this.pagination);
                         }
-                    }else{
-                        this.recurTest(this.submitDataInfo['approveList'][index],index)
-                    }
+                    }else this.recurTest(this.submitDataInfo['approveList'][index],index)
                 });
             }
         },

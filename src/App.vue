@@ -12,7 +12,7 @@ export default {
 
 <style>
 /* 线上导入fontIcon */
-@import url('//at.alicdn.com/t/font_1702412_46if5ose7ty.css');
+/* @import url('//at.alicdn.com/t/font_1702412_46if5ose7ty.css'); */
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
