@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-04-15 19:09:06
+ * @LastEditTime: 2020-07-30 16:34:51
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dossier_center\build\webpack.dev.conf.js
+ */ 
 'use strict'
 const utils = require('./utils')
 const webpack = require('webpack')
@@ -10,7 +18,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-const HOST = process.env.HOST
+const ip = require('ip').address();
+const open = require('opn');//打开浏览器
+const chalk = require('chalk');// 改变命令行中输出日志颜色插件
+
 const PORT = process.env.PORT && Number(process.env.PORT)
 
 const devWebpackConfig = merge(baseWebpackConfig, {
@@ -31,7 +42,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     hot: true,
     contentBase: false, // since we use CopyWebpackPlugin.
     compress: true,
-    host: HOST || config.dev.host,
+    host: ip,
     port: PORT || config.dev.port,
     open: config.dev.autoOpenBrowser,
     overlay: config.dev.errorOverlay
@@ -82,7 +93,7 @@ module.exports = new Promise((resolve, reject) => {
       // Add FriendlyErrorsPlugin
       devWebpackConfig.plugins.push(new FriendlyErrorsPlugin({
         compilationSuccessInfo: {
-          messages: [`Your application is running here: http://${devWebpackConfig.devServer.host}:${port}`],
+          messages: [`Local: ${chalk.cyan(`http://localhost:${port}`)}`,`Network: ${chalk.cyan(`http://${devWebpackConfig.devServer.host}:${port}`)}`],
         },
         onErrors: config.dev.notifyOnErrors
         ? utils.createNotifierCallback()

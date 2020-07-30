@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-04-15 19:09:06
+ * @LastEditTime: 2020-07-30 11:53:09
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dossier_center\src\assets\api\request.js
+ */ 
 import axios from "axios";
 import qs from "qs";
 import router from '@/router'
@@ -5,8 +13,8 @@ import { message } from 'ant-design-vue';
 
 const service = axios.create({
     // baseURL: 'http://106.12.68.167',  // api的base_url 
-    // baseURL: 'http://192.168.2.99:8080',
-    baseURL: 'http://56.212.7.252:80',
+    baseURL: 'http://192.168.2.25:8080',
+    // baseURL: 'http://56.212.7.252:80',
     // baseURL: 'http://localhost:8080',
     timeout: 5000  // 请求超时时间
 })

@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-04-15 19:09:06
+ * @LastEditTime: 2020-07-30 16:33:01
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \dossier_center\config\index.js
+ */ 
 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
