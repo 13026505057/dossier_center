@@ -1,3 +1,12 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-04-15 19:09:06
+ * @LastEditTime: 2020-07-30 16:59:12
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \dossier_center\README.md
+--> 
+
 # demo1
 
 > A Vue.js project
