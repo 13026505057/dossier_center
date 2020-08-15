@@ -426,6 +426,7 @@
                     2: "comfirmEditApp",
                     3: "andItemCase"
                 }
+                // console.log(listData[itemId])
                 this[listData[itemId]]()
             },
             // 修改审批流信息
@@ -452,7 +453,8 @@
                 this.showModel.captionsTitle = '新增审批流程信息';
                 this.submitDataInfo.org_flow_step = order;
                 this.showModel.modalAdd_single = true;
-                this.submitDataInfo['org_flow_id'] = e.key
+                this.submitDataInfo['org_flow_id'] = e.key 
+                this.approveData_single.attribute_order = e.listData.length+1;
             },
             // 修改审批流程信息
             editItemApp(e,order){
@@ -520,6 +522,7 @@
                 }
             },
             andItemCase(){
+                console.log(this.approveData_single)
                 const listData = this.approveData_single;
                 this.recurTest(listData,0);
             },
@@ -535,6 +538,7 @@
             },
             //递归遍历
             recurTest(item,index){
+                console.log(item)
                 this.$api.addApproveData({
                     org_flow_id: this.submitDataInfo['org_flow_id'],
                     approve_name: item.approve_name,

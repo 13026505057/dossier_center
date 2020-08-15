@@ -13,6 +13,11 @@
                             style="margin-top: 20px;text-align: left;" @change="changeTabItem">
                             <a-tab-pane v-for="(item) in tabListBtn" :tab="item.title" :key="item.label">
                                 <!-- tab表格 -->
+                                <div class="search-box">
+                                    <a-input v-model="pagination.case_police_nm" class="search-inp" allow-clear placeholder="请输入案件编号" />
+                                    <a-input v-model="pagination.dossier_name" class="search-inp" allow-clear placeholder="请输入案卷名称" />
+                                    <a-button @click="searchBtnClick" type="primary">查询</a-button>
+                                </div>
                                 <a-table :columns="columns_caseBorrow" :dataSource="tableData_caseBorrow" :pagination="pagination" :loading="loading"
                                     class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange">
                                     <template slot="operation" slot-scope="text,record">
@@ -74,17 +79,21 @@
                     style="width: 100%">
                     <el-table-column prop="create_user_name" label=" 审批人" align="center">
                         <template slot-scope="{ row }">
-                            <span> {{row.is_approved !=0 ? row.user_approve_name:row.userFlowApproveUserList[0].user_true_name}} </span>
+                            <span> 
+                                {{row.is_approved !=2 ? row.userFlowApproveUserList[0].user_true_name:row.approve_user_name}}
+                                <!-- {{row.is_approved ==2 ? row.user_approve_name:}} -->
+                            </span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="approve_result" label="审批结果" align="center" >
                         <template slot-scope="{ row }">
-                            <span>
+                            <!-- <span>
                                 {{row.is_approved !=0 ? row.approve_result:"未审批"}}
-                            </span>
-                            <!-- <span v-if="scope.row.approve_result== 'agree' ">同意</span>
-                            <span v-if="scope.row.approve_result== 'disagree' ">不同意</span>
-                            <span v-if="scope.row.approve_result== null ">待审批</span> -->
+                            </span> -->
+                            <span v-if="row.is_approved == 2 && row.approve_result== 'agree' ">同意</span>
+                            <span v-if="row.is_approved == 2 && row.approve_result== 'disAgree' " style="color:#ff0000;">不同意</span>
+                            <span v-if="row.is_approved == 0 && row.approve_result== null ">待审批</span>
+                            <span v-if="row.is_approved == 1 && row.approve_result== null ">审批中</span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="approve_time" label="审批时间" align="center">
@@ -219,7 +228,9 @@
                     pageNum: 1,
                     pageSize: 10,
                     case_type_name: '',
-                    stock_status: 'ZK'
+                    stock_status: 'ZK',
+                    case_police_nm: '',
+                    dossier_name: '',
                 },
                 pagination_approve: {
                     pageNum: 1,
@@ -299,6 +310,9 @@
                 this.resetSubmitInfo();
                 this.pagination['case_type_name'] = this.tabListBtn[checkedItem-1].title;
                 if(checkedItem==1) this.pagination['case_type_name'] = '';
+                this.getQueryListData(this.pagination);
+            },
+            searchBtnClick(){
                 this.getQueryListData(this.pagination);
             },
             tabListChecked(index){
@@ -499,6 +513,14 @@
             padding: 20px 0;
             background-color: white;
             height: 100%;
+            .search-box{
+                display: flex;
+                justify-content: flex-start;
+                .search-inp{
+                    width: 240px;
+                    margin-right: 20px;
+                }
+            }
             .searchCaseInfo{
                 text-align: left;
                 padding-left: 20px;
