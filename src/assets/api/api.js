@@ -753,4 +753,12 @@ export default {
             data
         })
     },
+    // 查询人员
+    selctpeo(data){
+        return service({
+            url: '/juanzong/user/user/getByPage',
+            method: 'post',
+            data
+        })
+    },
 }

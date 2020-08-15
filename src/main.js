@@ -2,7 +2,8 @@ import Vue from 'vue'
 import router from './router'
 import store from './store'
 import App from './App.vue'
-
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 import AntV from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import less from 'less'
@@ -18,7 +19,7 @@ Vue.config.productionTip = false
 
 Vue.prototype.$api = api
 Vue.prototype.$md5 = md5
-
+Vue.use(ElementUI);
 router.beforeEach((to, from, next) => {
   if ((to.fullPath === '/login') || sessionStorage.getItem('token')) {
     next()

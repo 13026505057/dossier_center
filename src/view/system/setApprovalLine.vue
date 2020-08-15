@@ -152,7 +152,7 @@
                                 </a-select-option>
                             </a-select>
                             <!--审批人名称-->
-                            <a-select style="margin-top: 10px;width: 150px;" mode="multiple"
+                            <a-select style="margin-top: 10px;width: 150px;" mode="multiple" v-if="shownow"
                                 placeholder="请选择审批人名称" v-model="approveData_single.approve_userId" optionLabelProp="label">
                                 <a-select-option v-for="item in approveData_single.approve_userDepartment"
                                     :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
@@ -188,8 +188,19 @@
         return dataInfo
     }
     export default {
+        watch:{
+           'approveData_single.approve_type':function(val,old){
+               console.log(val)
+               if(val == 'ZBBMFZR'){
+                    this.shownow = false
+               }else{
+                   this.shownow = true
+               }
+           }
+        },
         data(){
             return{
+                shownow:true,
                 pagination: {
                     pageNum: 1,
                     pageSize: 10
