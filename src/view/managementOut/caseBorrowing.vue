@@ -94,7 +94,7 @@
             return{
                 tabCheckeTab: 0,
                 showModel: {
-                    modalAppreciate: true,
+                    modalAppreciate: false,
                     org_flow_id: [],
                 },
                 caseDataInfoList: [
@@ -253,7 +253,7 @@
                     else if(index==3) 
                         this.getApproveData({
                             ...this.pagination_approve,
-                            is_approved: '1,2'
+                            is_approved: '0,1'
                         });
             },
             //点击申请借阅
@@ -381,12 +381,10 @@
             },
             //重置选择项
             resetSubmitData(){
-                this.pagination['pageNum'] = 1;
-                this.pagination['pageSize'] = 10;
+                this.pagination['pageNum'] = this.pagination_approve['pageNum'] = 1;
+                this.pagination['pageSize'] = this.pagination_approve['pageSize'] = 10;
                 this.pagination['case_type_name'] = '';
                 this.pagination['stock_status'] = 'ZK';
-                this.pagination_approve['pageNum'] = 1;
-                this.pagination_approve['pageSize'] = 10;
                 delete this.pagination.total;
                 delete this.pagination.current;
                 delete this.pagination_approve.total;
