@@ -5,7 +5,13 @@
                 <span @click="addInfo">
                     <i class="iconfont icon-cf-c101"></i>新增
                 </span>
+                <el-input v-model="sel.user_true_name" placeholder="请输入姓名" style="width:120px;margin-left:20px;"></el-input>
+                <el-input v-model="sel.current_dept_ids" placeholder="请输入部门" style="width:120px;margin-left:10px;"></el-input>
+                  <span @click="selct" style="margin-left:10px;">
+                    <i class="el-icon-search"></i>查询
+                </span>        
             </div>
+             
             <a-table bordered :columns="columns_setOperator" :pagination="pagination"
                 :data-source="tableData_setOperator" class="tableCaseData" size="middle"
                 @change="handleTableChange" :loading="loading">
@@ -69,6 +75,13 @@
     export default {
         data(){
             return{
+                sel:{
+                   user_true_name:'',
+                   current_dept_ids:'',
+                   pageNum: 1,
+                   pageSize: 10
+                },
+                
                 pagination: {
                     pageNum: 1,
                     pageSize: 10
@@ -115,6 +128,14 @@
             this.getRoleList();
         },
         methods: {
+            //查询
+            selct(){
+                // this.$api.selctpeo(this.sel).then(res=>{
+                //     console.log(res)
+                //     this.tableData_setOperator = operatortData;
+                // })
+                this.getOperatorList(this.sel)
+            },
             //选中部门
             checkedDepartment(value) {
                 this.submitDataInfo.dept_ids = value;
@@ -275,6 +296,7 @@
             background-color: white;
             height: 100%;
             .addCaseInfo{
+               
                 text-align: left;
                 padding-left: 20px; 
                 color: white;

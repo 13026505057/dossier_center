@@ -30,18 +30,21 @@
                         <a-table :columns="columns_history" :dataSource="tableData_history" :pagination="pagination_approve" 
                             class="components-table-demo-nested tableCaseData" size="middle" @change="handleTableChange"
                             v-if="tabCheckeTab==2" :loading="loading">
-                            <a-steps slot="expandedRowRender" slot-scope="record" >
+                            <!-- <a-steps slot="expandedRowRender" slot-scope="record" >
                                 <a-step :status="(item.is_approved==1 || (item.is_approved==2 && item.approve_result=='agree'))?'process':'wait'"
                                     :title="item.title" v-for="item in record.listData" :key="item.key">
-                                    {{ item.is_approved }}
+                                    {{ item.is_approved }} 
                                     <a-icon :type="item.approve_result=='agree'?'check-circle':(item.approve_result=='disAgree'?'close-circle':'loading')" 
                                         slot="icon"/>
-                                    <template slot="description">
+                                  <template slot="description">
                                         <div>{{ item.approve_content }}</div>
                                         <div>{{ item.approve_time }}</div>
                                     </template>
                                 </a-step>
-                            </a-steps>
+                            </a-steps> -->
+                            <template slot="operation" slot-scope="text,record">
+                                <span class="editDate table-operation" @click="xianc(record)">详情</span>
+                            </template>
                         </a-table>
                         <!-- 申请待操作 -->
                         <div v-if="tabCheckeTab==3">
@@ -63,7 +66,43 @@
                     </a-tab-pane>
                 </a-tabs>
             </div>
-            
+            <el-dialog
+                title="详情"
+                :visible.sync="sk" > 
+                <el-table
+                    :data="tasb"
+                    style="width: 100%">
+                    <el-table-column prop="create_user_name" label=" 审批人" align="center">
+                        <template slot-scope="{ row }">
+                            <span> {{row.is_approved !=0 ? row.user_approve_name:row.userFlowApproveUserList[0].user_true_name}} </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="approve_result" label="审批结果" align="center" >
+                        <template slot-scope="{ row }">
+                            <span>
+                                {{row.is_approved !=0 ? row.approve_result:"未审批"}}
+                            </span>
+                            <!-- <span v-if="scope.row.approve_result== 'agree' ">同意</span>
+                            <span v-if="scope.row.approve_result== 'disagree' ">不同意</span>
+                            <span v-if="scope.row.approve_result== null ">待审批</span> -->
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="approve_time" label="审批时间" align="center">
+                        <template slot-scope="{ row }">
+                            <span>{{row.is_approved !=0 ? row.approve_time:""}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="approve_content"
+                        label="备注"
+                        align="center">
+                        <template slot-scope="{ row }">
+                            <span>{{row.is_approved !=0 ? row.approve_content:""}}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!-- <span>this is a dialog</span> -->
+            </el-dialog>
             <!-- 提交借阅申请 -->
             <a-modal title="提交借阅申请"
                 centered v-model="showModel.modalAppreciate" @ok="confirmBtn" @cancel="resetSubmitInfo">
@@ -82,6 +121,9 @@
                     <a-date-picker showTime :placeholder="item.placeholder"
                         @change="onChange" v-else/>
                 </div>
+                <div style="width:100%;padding-left:30px;display:flex">
+                    <div>借阅原因：</div><el-input v-model="submitDataInfo.user_flow_reason" placeholder="请输入" style="width:200px;margin-left:20px"></el-input>
+                </div>
             </a-modal>
         </div>
     </div>
@@ -92,6 +134,8 @@
     export default {
         data(){
             return{
+                tasb:[],
+                sk:false,
                 tabCheckeTab: 0,
                 showModel: {
                     modalAppreciate: false,
@@ -100,6 +144,7 @@
                 caseDataInfoList: [
                     { captionTitle: '审批流程',placeholder: '请选择审批流程',dom:'org_flow_id' },
                     { captionTitle: '归还时间',placeholder: '请选择归还时间',dom:'borrow_time' },
+                    
                 ],
                 tabTabList: [
                     { icon: 'icon-yemian', title: '案件列表',label:1, num:0 },
@@ -110,7 +155,8 @@
                 submitDataInfo: {
                     case_id: 0,
                     org_flow_id: '',
-                    borrow_time: {}
+                    borrow_time: {},
+                    user_flow_reason:''
                 },
                 //案件列表_可借阅
                 columns_caseBorrow: [ 
@@ -137,8 +183,12 @@
                 columns_history: [
                     { title: '案件名称', dataIndex: 'case_name' },
                     { title: '案件编号', dataIndex: 'case_number' },
-                    { title: '操作类型', dataIndex: 'operate_type' },
+                    { title: '申请人', dataIndex: 'user_true_name' },
+                    { title: '申请类型', dataIndex: 'flow_type_name' },
                     { title: '申请日期', dataIndex: 'create_time' },
+                    { title: '申请状态', dataIndex: 'user_flow_status' },
+                    { title: '申请原因', dataIndex: 'user_flow_reason' },
+                    { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' }, },
                 ],
                 //申请待操作记录
                 columns_setting: [
@@ -158,7 +208,7 @@
                 // 申请记录_待操作
                 tableData_setting: [],
                 checkedInfo: { 
-                    statusChecked: '全部',
+                    statusChecked: '审批中',
                     statusList: [
                         { title: '全部', itemId: '1,2' },
                         { title: '审批中', itemId: '1' },
@@ -192,6 +242,13 @@
                 this.tabTabList.splice(2,1)
         },
         methods: {
+            xianc(record){
+                this.sk = true;
+                console.log(this.tableData_history)
+
+                this.tasb = record.listData;
+                console.log(record)
+            },
             onChange(value, dateString) {
                 this.submitDataInfo['borrow_time'] = dateString;
             },
@@ -253,7 +310,7 @@
                     else if(index==3) 
                         this.getApproveData({
                             ...this.pagination_approve,
-                            is_approved: '0,1'
+                            is_approved: '1'
                         });
             },
             //点击申请借阅
@@ -280,6 +337,7 @@
                 const pagination = { ...this.pagination };
                 let returnData_appList = await this.$api.getApproveDataInfo(data);
                 let approveList = [];
+                // this.tasb = returnData_appList.data.list[0].userFlowApproveList
                 returnData_appList.data.list.forEach((item,index)=>{
                     let return_listData = [];
                     item.userFlowApproveList.forEach((itemChildren,index)=>{
@@ -290,7 +348,10 @@
                             is_approved: itemChildren.is_approved,
                             approve_result: itemChildren.approve_result,
                             approve_content: itemChildren.approve_content,
-                            approve_time: itemChildren.approve_time
+                            approve_time: itemChildren.approve_time,
+                            create_user_name: itemChildren.create_user_name,
+                            userFlowApproveUserList:itemChildren.userFlowApproveUserList,
+                            user_approve_name:itemChildren.user_approve_name,
                         })
                     })
                     approveList.push({
@@ -299,7 +360,13 @@
                         case_number: item.userFlowDossierList[0].casesList[0].case_police_nm,
                         operate_type: item.flow_type_name,
                         create_time: item.create_time,
-                        listData: return_listData
+                        listData: return_listData,
+                        user_true_name:item.user_true_name,
+                        flow_type_name:item.flow_type_name,
+                        user_flow_status:item.user_flow_status > 0? (item.user_flow_status>1? '不通过':'通过'):'审批中',
+                        user_flow_reason:item.user_flow_reason,
+                        is_approved:item.is_approved,
+
                     })
                 })
                 pagination.total = Number(returnData_appList.data.total);
