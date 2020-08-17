@@ -2,12 +2,25 @@
     <div class="setOperatorPage"> 
         <div class="setOperatorList">
             <div class="addCaseInfo">
-                <span @click="addInfo">
+                <span @click="addInfo" class="span">
                     <i class="iconfont icon-cf-c101"></i>新增
                 </span>
                 <el-input v-model="sel.user_true_name" placeholder="请输入姓名" style="width:120px;margin-left:20px;"></el-input>
-                <el-input v-model="sel.current_dept_ids" placeholder="请输入部门" style="width:120px;margin-left:10px;"></el-input>
-                  <span @click="selct" style="margin-left:10px;">
+                <!-- <el-input v-model="sel.current_dept_ids" placeholder="请输入部门" style="width:120px;margin-left:10px;"></el-input> -->
+                <!-- <a-select mode="sel.current_dept_ids" style="width:120px;margin-left:20px;height:80px" placeholder="请输入部门"  @change="handleChange()" >
+                        <a-select-option v-for="(it,i) in bm" :key="i">
+                        {{ it.dept_name }}
+                        </a-select-option>
+                </a-select> -->
+                <el-select v-model="sel.current_dept_ids" filterable placeholder="请输入部门" style="width:120px;margin-left:20px;" >
+                    <el-option
+                    v-for="item in bm"
+                    :key="item.dept_id"
+                    :label="item.dept_name"
+                    :value="item.dept_id">
+                    </el-option>
+                </el-select>
+                  <span @click="selct" style="margin-left:10px;" class="span">
                     <i class="el-icon-search"></i>查询
                 </span>        
             </div>
@@ -45,7 +58,7 @@
                     <span style="display:table-cell;width: 25%;text-align: right;padding-right: 20px">
                         选择部门： 
                     </span>
-                    <a-select style="width: 120px" @change="checkedDepartment" v-model="submitDataInfo.dept_ids">
+                    <a-select style="width: 230px" @change="checkedDepartment" v-model="submitDataInfo.dept_ids">
                         <a-select-option v-for="item in addOperatorItem.departmentList" 
                             :value="item.key" :key="item.key"> {{ item.title }}
                         </a-select-option>
@@ -75,6 +88,7 @@
     export default {
         data(){
             return{
+                bm:[], // 所有部门
                 sel:{
                    user_true_name:'',
                    current_dept_ids:'',
@@ -123,17 +137,27 @@
                 tableData_setOperator: [],
             }
         },
+        created(){
+             this.selectBM();
+        },
         mounted() {
             this.getOperatorList(this.pagination);
-            this.getRoleList();
+            this.getRoleList();  
         },
         methods: {
+               handleChange(value) {
+                console.log(`selected ${value}`);
+                },
+            //获取所有部门
+            selectBM(){
+               this.$api.selctbm().then(res=>{
+                   this.bm = res.data
+                   console.log(this.bm)
+               })
+            },
             //查询
             selct(){
-                // this.$api.selctpeo(this.sel).then(res=>{
-                //     console.log(res)
-                //     this.tableData_setOperator = operatortData;
-                // })
+         
                 this.getOperatorList(this.sel)
             },
             //选中部门
@@ -300,7 +324,7 @@
                 text-align: left;
                 padding-left: 20px; 
                 color: white;
-                span{
+                .span{
                     display: inline-block;
                     padding: 5px 20px;
                     background-color: @bgBtnColor;

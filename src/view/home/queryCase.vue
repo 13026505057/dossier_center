@@ -4,6 +4,7 @@
             <div class="searchCaseInfo">
                 按案卷名称查询： 
                 <a-input placeholder="请输入案卷名称" allowClear v-model="searchValue" class="enterInputData"/>
+                <a-input placeholder="请输入案卷编号" allowClear v-model="searchValue2" class="enterInputData"/>
                 <a-button class="comfirmAdd" @click="confirmSearch">查询</a-button>
                 <a-button type="primary" ghost class="refreshBtn" @click="refreshBtn()">刷新</a-button>
             </div>
@@ -36,6 +37,7 @@
         data(){
             return{
                 searchValue: '',
+                searchValue2:'',
                 //标题
                 columns_dossier: [
                     { title: '案件/事件编号', dataIndex: 'number', },
@@ -52,7 +54,8 @@
                 pagination: {
                     pageNum: 1,
                     pageSize: 10,
-                    dossier_name: ''
+                    dossier_name: '',
+                    case_police_nm:''
                 },
                 loading: false,
                 //详情信息
@@ -102,6 +105,7 @@
                 this.pagination.current = 1;
                 this.pagination.pageSize = 10,
                 this.pagination.dossier_name = this.searchValue;
+                this.pagination.case_police_nm = this.searchValue2;
                 this.getQueryListData(this.pagination);
             },
             //
