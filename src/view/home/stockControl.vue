@@ -22,7 +22,8 @@
                 @change="handleTableChange" :loading="loading" >
                 <span slot="case_status" slot-scope="text"
                     :class="text==0?'activeNotHad':text==1?'activeHanding':''">
-                    {{ text == 0?'未开始':text==1?'进行中':'已结束', }}
+                    {{ text == 0?'未开始':text==1?'进行中':'已结束'}} 
+                    
                 </span>
                 <template slot="operation" slot-scope="text,record">
                     <a-button class="editDate active01" @click="detailItem(record)" size="small">详情</a-button>
