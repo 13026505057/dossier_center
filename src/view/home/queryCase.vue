@@ -47,7 +47,7 @@
                     { title: '创建日期', dataIndex: 'creatDate', },
                     { title: '主办民警', dataIndex: 'main', },
                     { title: '协办民警', dataIndex: 'operativeCivilian', },
-                    { title: '主办单位', dataIndex: 'mainOff', },
+                    { title: '主办单位', dataIndex: 'organiza_org_namee', },
                     { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' }, },
                 ],
                 tableData_dossier: [],
@@ -80,7 +80,7 @@
                     { dom: 'dossier_name',title: '案卷名称' },
                     { dom: 'dossier_type_name',title: '案卷类型' },
                     { dom: 'dossier_create_time',title: '创建时间' },
-                    { dom: 'organize_user_name',title: '主办单位' },
+                    { dom: 'organiza_org_namee',title: '主办单位' },
                 ];
                 let dataDom = [];
                 dataDomArr.forEach((item,index)=>{
@@ -136,10 +136,12 @@
                                 creatDate: item.dossier_create_time,
                                 main: item.organize_user_name,
                                 operativeCivilian: item.join_user_name,
-                                ...item
+                                organiza_org_namee:item.organiza_org_namee,
+                                // ...item
                             })
                         })
                         this.tableData_dossier = queryData;
+                        console.log(this.tableData_dossier )
                         pagination.total = queryListData.data.total;
                         this.pagination = pagination;
                         this.loading = false;

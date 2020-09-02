@@ -16,6 +16,8 @@
                                 <div class="search-box">
                                     <a-input v-model="pagination.case_police_nm" class="search-inp" allow-clear placeholder="请输入案件编号" />
                                     <a-input v-model="pagination.case_name" class="search-inp" allow-clear placeholder="请输入案卷名称" />
+                                    <a-input v-model="pagination.organiza_org_name" class="search-inp" allow-clear placeholder="请输入主办单位" />
+                                    <a-input v-model="pagination.case_type_name" class="search-inp" allow-clear placeholder="请输入案卷类型" />
                                     
                                     <a-button @click="searchBtnClick" type="primary">查询</a-button>
                                 </div>
@@ -228,6 +230,8 @@
                     case_type_name: '',
                     stock_status: 'ZK',
                     case_police_nm: '',
+                    organiza_org_name:'',
+                    case_type_name:'',
                     case_name: '',
             
                 },

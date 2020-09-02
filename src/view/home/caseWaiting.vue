@@ -3,14 +3,22 @@
         <div class="caseWaitingList">
             <div class="searchCaseInfo">
                 <!-- 筛选 -->
-                <a-row :gutter="16" justify="center" class="searchBtnInfo">
-                    <a-col class="gutter-row" :span="8">
+                <a-row :gutter="24" justify="center" class="searchBtnInfo">
+                    <a-col class="gutter-row" :span="6">
+                        <a-input-search placeholder="请输入主办单位" @search="confirmSearch('organiza_org_name')" 
+                            enterButton v-model="pagination.organiza_org_name" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="6">
                         <a-input-search placeholder="请输入案件名称" @search="confirmSearch('case_name')" 
                             enterButton v-model="pagination.case_name" />
                     </a-col>
-                    <a-col class="gutter-row" :span="8">
+                    <a-col class="gutter-row" :span="6">
                         <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
                             enterButton v-model="pagination.case_police_nm" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="6">
+                        <a-input-search placeholder="请输入案件类型" @search="confirmSearch('case_type_name')" 
+                            enterButton v-model="pagination.case_type_name" />
                     </a-col>
                 </a-row>
             </div>
@@ -68,7 +76,9 @@
                     case_type_name: '',
                     case_status: '210,115',
                     case_name: '',
-                    case_police_nm: ''
+                    organiza_org_name:'',
+                    case_police_nm: '',
+                    case_type_name:'',
                 },
                 loading: false,
                 //案卷列表

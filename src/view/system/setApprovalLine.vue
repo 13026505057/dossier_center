@@ -426,8 +426,10 @@
                     2: "comfirmEditApp",
                     3: "andItemCase"
                 }
-                // console.log(listData[itemId])
+                 console.log('itemid')
+                 console.log(itemId)
                 this[listData[itemId]]()
+                this.submitDataInfo.org_flow_step = 0
             },
             // 修改审批流信息
             editItemFlow(e,order){
@@ -533,6 +535,7 @@
             },
             // 确认提交--新增审批流
             addItem(){
+                console.log('新增加')
                 const listData = this.submitDataInfo['approveList'];
                 this.recurTest(listData[0],0);
             },

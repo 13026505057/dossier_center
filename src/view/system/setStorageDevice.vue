@@ -51,6 +51,7 @@
                         </a-select-option>
                     </a-select>
                     
+                    
                 </div>
             </a-modal>
         </div>
@@ -342,6 +343,7 @@
                     color: white;
                     background-color: @bgBtnColor;
                     border-radius: 5px;
+                    
                 }
             }
         }
