@@ -33,7 +33,7 @@
                 </a-table>
             </a-table>
             <!-- 新增批流信息 -->
-            <a-modal :title="showModel.captionsTitle"
+            <a-modal :title="showModel.captionsTitle" width="45%"
                 centered v-model="showModel.modalInput" @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo">
                 <div style="display:table;width: 100%;margin-bottom: 10px">
                     <span style="display:table-cell;width: 23%;padding-right: 20px">
@@ -80,8 +80,14 @@
                             </a-select>
                             <!--审批人名称-->
                             <a-select style="margin-top: 10px;width: 150px;" mode="multiple"
-                                placeholder="请选择审批人名称" v-model="item.approve_userId" optionLabelProp="label"
+                                placeholder="请选择审批人名称" v-model="item.approve_userId" optionLabelProp="label" 
                                 :disabled="submitDataInfo['approveDisBtn']">
+                                <!-- <a-select-option v-for="item in item.approve_userDepartment1"
+                                    :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
+                                    :key="item.flow_approve_type_id"> 
+                                    {{ item.flow_approve_type_name }}
+                                </a-select-option> -->
+                                <!-- 搜索输入时是id  optionLabelProp="label" -->
                                 <a-select-option v-for="item in item.approve_userDepartment"
                                     :value="item.flow_approve_type_id" :label="item.flow_approve_type_name" 
                                     :key="item.flow_approve_type_id"> 
@@ -180,6 +186,16 @@
                 approve_name: '',
                 approve_type: '',
                 approve_userDepartment: [],
+                approve_userDepartment1: [{
+                    flow_approve_type_name:"111111111111111111",
+                    flow_approve_type_id:"11"
+                },{
+                    flow_approve_type_name:"2222222222222",
+                    flow_approve_type_id:"22"
+                },{
+                    flow_approve_type_name:"333333333333",
+                    flow_approve_type_id:"33"
+                }],
                 approve_list: [],
                 approve_userId: [],
                 attribute_order: 1
@@ -357,10 +373,12 @@
                 returnData_man.data.forEach(item=>{
                     reutrnData_manList.push({
                         flow_approve_type_id: item.user_id,
-                        flow_approve_type_name: item.user_name
+                        flow_approve_type_name: item.user_true_name
                     })
                 })
                 this.addOperatorItem['departmentList_man'] = reutrnData_manList;
+                console.log(reutrnData_manList)
+
             },
             //添加审批流
             async addApprovalInfo(){
@@ -479,6 +497,7 @@
                 }
                 this.$api.editApproveFlowData(dataInfo).then(()=>{
                     this.showModel.modalEdit = false;
+                    this.showModel.modalInput = false;
                     this.getApprovalList(this.pagination);
                     this.resetSubmitInfo();
                 })
@@ -530,6 +549,7 @@
             addInfo(){
                 this.showModel.captionsTitle = '新增审批流信息';
                 this.showModel.modalInput = true;
+                this.submitDataInfo = initSubmitInfo()
             },
             // 确认提交--新增审批流
             addItem(){
@@ -561,6 +581,7 @@
                         }
                     }else this.recurTest(this.submitDataInfo['approveList'][index],index)
                 });
+                this.showModel.modalInput = false;
             }
         },
     }
