@@ -2,19 +2,25 @@
     <div class="dossierPages">
         <div class="dossierList">
             <!-- 筛选 -->
-            <a-row :gutter="16" justify="center" class="searchBtnInfo">
-                <a-col class="gutter-row" :span="8">
-                    <a-range-picker @change="confirmData" separator="至" :placeholder="['开始时间','结束时间']">
+            <a-row :gutter="24" justify="center" class="searchBtnInfo">
+                <a-col class="gutter-row" :span="6">
+                    <!-- <a-range-picker @change="confirmData" separator="至" :placeholder="['开始时间','结束时间']">
                         <i class="iconfont icon-yemian" slot="suffixIcon"></i>
-                    </a-range-picker>
+                    </a-range-picker> -->
+                     <a-input-search placeholder="请输入主办单位" @search="confirmSearch('organiza_org_name')" 
+                        enterButton v-model="searchDataInfo.organiza_org_name" />
                 </a-col>
-                <a-col class="gutter-row" :span="8">
+                <a-col class="gutter-row" :span="6">
                     <a-input-search placeholder="请输入案件名称" @search="confirmSearch('case_name')" 
                         enterButton v-model="searchDataInfo.case_name" />
                 </a-col>
-                <a-col class="gutter-row" :span="8">
+                <a-col class="gutter-row" :span="6">
                     <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
                         enterButton v-model="searchDataInfo.case_police_nm" />
+                </a-col>
+                <a-col class="gutter-row" :span="6">
+                    <a-input-search placeholder="请输入案件类型" @search="confirmSearch('case_type_name')" 
+                        enterButton v-model="searchDataInfo.case_type_name" />
                 </a-col>
             </a-row>
             <!-- tab标签 -->
@@ -73,7 +79,8 @@
                     begin_la_time: '',
                     end_la_time: '',
                     case_name: '',
-                    case_police_nm: ''
+                    case_police_nm: '',
+                    organiza_org_name:''
                 },
                 //tab标签
                 tabListBtn: [
@@ -92,6 +99,7 @@
                     { title: '受案单位', dataIndex: 'acceptUnit', },
                     { title: '主办单位', dataIndex: 'hostUnit', },
                     { title: '主办民警', dataIndex: 'hostPeo', },
+                    { title:'在库状态',dataIndex: 'stock_status', },
                     {
                         title: '操作', dataIndex: 'operation', key: 'operation',
                         scopedSlots: { customRender: 'operation' },
@@ -226,6 +234,24 @@
                 const queryCaseList = queryListData.data.list;
                 const queryData = [];
                 queryCaseList.forEach((item,index)=>{
+                    let stock = ''
+                    if(item.stock_status == 'YRK'){
+                        stock = '应入库'
+                    }else if(item.stock_status == 'DRK'){
+                        stock = '待入库'
+                    }else if(item.stock_status == 'DCK'){
+                         stock = '待出库'
+                    }else if(item.stock_status == 'ZC'){
+                        stock = '暂存'
+                    }else if(item.stock_status == 'CK'){
+                        stock = '暂存出库'
+                    }else if(item.stock_status == 'YGD'){
+                        stock = '已归档'
+                    }else if(item.stock_status == 'SPZ'){
+                        stock = '审批中'
+                    }else if(item.stock_status == 'JY'){
+                        stock = '归档借阅'
+                    }
                     queryData.push({
                         key: item.case_id,
                         index: index+1,
@@ -238,6 +264,7 @@
                         receivedTime: item.sa_time,
                         hostUnit: item.organiza_org_name,
                         hostPeo: item.organiza_user_name,
+                        stock_status:stock,
                         listData: [],
                     })
                 });

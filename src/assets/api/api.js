@@ -761,4 +761,12 @@ export default {
             data
         })
     },
+    // 查询所有部门
+    selctbm(data){
+        return service({
+            url: '/juanzong/dept/dept/get',
+            method: 'post',
+            data
+        })
+    },
 }

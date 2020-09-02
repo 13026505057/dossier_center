@@ -4,7 +4,7 @@
         <div class="topShowInfo">
             <a-row :gutter="16" justify="center">
                 <a-col class="gutter-row" :span="6" 
-                    v-for="(item,index) in newsInfoData" :key="index">
+                    v-for="(item,index) in newsInfoData" :key="index" @click="todeta(item.path)" style="cursor:pointer;">
                     <div class="gutter-box" :style="{'color':item.bgset}">
                         <div class="leftData">
                             <span class="iconInfo" :style="{'background':item.bgset}">
@@ -79,10 +79,10 @@
         data(){
             return{
                 newsInfoData: [
-                    { icon: 'icon-tongzhixiaoxi', title: '通知消息', number: 0, bgset: '#7586F7' },
-                    { icon: 'icon-tubiao_chukushenpi', title: '出库审批', number: 0, bgset: '#21C1F5' },
-                    { icon: 'icon-dairuku', title: '待入库', number: 0, bgset: '#58CDB2' },
-                    { icon: 'icon-chuku1', title: '出库', number: 0, bgset: '#13D3DA' },
+                    { icon: 'icon-tongzhixiaoxi', title: '通知消息', number: 0, bgset: '#7586F7',path:'/myReminder' },
+                    { icon: 'icon-tubiao_chukushenpi', title: '出库审批', number: 0, bgset: '#21C1F5',path:'/caseBorrowing' },
+                    { icon: 'icon-dairuku', title: '待入库', number: 0, bgset: '#58CDB2',path:'/caseWaiting' },
+                    { icon: 'icon-chuku1', title: '出库', number: 0, bgset: '#13D3DA',path:'' },
                 ],
                 dataInfo: {
                     pageNum: '1',
@@ -135,6 +135,10 @@
             this.getShowDataInfo();
         },
         methods: {
+            todeta(path){
+                console.log('2365')
+                 this.$router.push({ path:path  })
+            },
             closeVideos(){
                 this.showModel.modal2Video = false;
                 this.showModel.videoShowData = {};

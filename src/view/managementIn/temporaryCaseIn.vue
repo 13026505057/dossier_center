@@ -3,16 +3,24 @@
         <div class="temoraryCaseList">
             <div class="searchCaseInfo">
                 <!-- 筛选 -->
-                <a-row :gutter="16" justify="center" class="searchBtnInfo">
-                    <a-col class="gutter-row" :span="8">
+                <a-row :gutter="24" justify="center" class="searchBtnInfo">
+                    <a-col class="gutter-row" :span="5">
+                        <a-input-search placeholder="请输入主办单位" @search="confirmSearch('organiza_org_name')" 
+                            enterButton v-model="pagination.organiza_org_name" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="5">
                         <a-input-search placeholder="请输入案件名称" @search="confirmSearch('case_name')" 
                             enterButton v-model="pagination.case_name" />
                     </a-col>
-                    <a-col class="gutter-row" :span="8">
+                    <a-col class="gutter-row" :span="5">
                         <a-input-search placeholder="请输入案件编号" @search="confirmSearch('case_police_nm')" 
                             enterButton v-model="pagination.case_police_nm" />
                     </a-col>
-                    <a-col class="gutter-row" :span="8">
+                     <a-col class="gutter-row" :span="5">
+                        <a-input-search placeholder="请输入案件类型" @search="confirmSearch('case_type_name')" 
+                            enterButton v-model="pagination.case_type_name" />
+                    </a-col>
+                    <a-col class="gutter-row" :span="4">
                         <a-button type="primary" @click="stockExport">导出</a-button>
                     </a-col>
                 </a-row>
@@ -64,6 +72,8 @@
                     stock_status: 'ZK',
                     shale_type: 1,  //智能柜1，密集架2
                     case_name: '',
+                    organiza_org_name:'',
+                    case_type_name:'',
                     case_police_nm: ''
                 },
                 loading: false,

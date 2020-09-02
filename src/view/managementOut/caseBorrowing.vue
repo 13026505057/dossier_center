@@ -15,7 +15,10 @@
                                 <!-- tab表格 -->
                                 <div class="search-box">
                                     <a-input v-model="pagination.case_police_nm" class="search-inp" allow-clear placeholder="请输入案件编号" />
-                                    <a-input v-model="pagination.dossier_name" class="search-inp" allow-clear placeholder="请输入案卷名称" />
+                                    <a-input v-model="pagination.case_name" class="search-inp" allow-clear placeholder="请输入案卷名称" />
+                                    <a-input v-model="pagination.organiza_org_name" class="search-inp" allow-clear placeholder="请输入主办单位" />
+                                    <a-input v-model="pagination.case_type_name" class="search-inp" allow-clear placeholder="请输入案卷类型" />
+                                    
                                     <a-button @click="searchBtnClick" type="primary">查询</a-button>
                                 </div>
                                 <a-table :columns="columns_caseBorrow" :dataSource="tableData_caseBorrow" :pagination="pagination" :loading="loading"
@@ -77,19 +80,16 @@
                 <el-table
                     :data="tasb"
                     style="width: 100%">
-                    <el-table-column prop="create_user_name" label=" 审批人" align="center">
+                    <el-table-column prop="user_true_name" label=" 审批人" align="center">
                         <template slot-scope="{ row }">
                             <span> 
                                 {{row.is_approved !=2 ? row.userFlowApproveUserList[0].user_true_name:row.approve_user_name}}
-                                <!-- {{row.is_approved ==2 ? row.user_approve_name:}} -->
+                               
                             </span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="approve_result" label="审批结果" align="center" >
                         <template slot-scope="{ row }">
-                            <!-- <span>
-                                {{row.is_approved !=0 ? row.approve_result:"未审批"}}
-                            </span> -->
                             <span v-if="row.is_approved == 2 && row.approve_result== 'agree' ">同意</span>
                             <span v-if="row.is_approved == 2 && row.approve_result== 'disAgree' " style="color:#ff0000;">不同意</span>
                             <span v-if="row.is_approved == 0 && row.approve_result== null ">待审批</span>
@@ -110,7 +110,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <!-- <span>this is a dialog</span> -->
+          
             </el-dialog>
             <!-- 提交借阅申请 -->
             <a-modal title="提交借阅申请"
@@ -230,7 +230,10 @@
                     case_type_name: '',
                     stock_status: 'ZK',
                     case_police_nm: '',
-                    dossier_name: '',
+                    organiza_org_name:'',
+                    case_type_name:'',
+                    case_name: '',
+            
                 },
                 pagination_approve: {
                     pageNum: 1,
@@ -258,7 +261,9 @@
                 console.log(this.tableData_history)
 
                 this.tasb = record.listData;
-                console.log(record)
+                 console.log('1111')
+                console.log(record.listData[0].userFlowApproveUserList[0].user_true_name)
+                console.log(record.listData[1].userFlowApproveUserList[0].user_true_name)
             },
             onChange(value, dateString) {
                 this.submitDataInfo['borrow_time'] = dateString;
@@ -366,6 +371,7 @@
                             create_user_name: itemChildren.create_user_name,
                             userFlowApproveUserList:itemChildren.userFlowApproveUserList,
                             user_approve_name:itemChildren.user_approve_name,
+                            approve_user_name:itemChildren.approve_user_name,
                         })
                     })
                     approveList.push({
@@ -380,6 +386,7 @@
                         user_flow_status:item.user_flow_status > 0? (item.user_flow_status>1? '不通过':'通过'):'审批中',
                         user_flow_reason:item.user_flow_reason,
                         is_approved:item.is_approved,
+                        approve_user_name:item.approve_user_name,
 
                     })
                 })
