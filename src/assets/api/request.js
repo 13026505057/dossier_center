@@ -12,8 +12,8 @@ import router from '@/router'
 import { message } from 'ant-design-vue';
 
 const service = axios.create({
-    // baseURL: 'http://106.12.68.167:80',  // api的base_url 
-    baseURL: 'http://192.168.2.137:8081',
+    baseURL: 'http://106.12.68.167:80',  // api的base_url 
+   // baseURL: 'http://192.168.2.137:8081',
     // baseURL: 'http://56.212.7.252:80',
     // baseURL: 'http://localhost:8080',
     timeout: 30000  // 请求超时时间

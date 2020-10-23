@@ -32,7 +32,7 @@
                 </template>
                 </a-table>
             </a-table>
-            <!-- 新增批流信息 -->
+            <!-- 新增批流信息   外边的新增按钮+表格外边修改-->
             <a-modal :title="showModel.captionsTitle" width="45%"
                 centered v-model="showModel.modalInput" @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo">
                 <div style="display:table;width: 100%;margin-bottom: 10px">
@@ -44,7 +44,7 @@
                     <a-select style="width: 100px" :disabled="!submitDataInfo['approveDisBtn']"
                         placeholder="请选择类型" v-model="submitDataInfo.org_flow_type">
                         <a-select-option v-for="item in addOperatorItem.departmentList" 
-                            :value="item.flow_type_id" :key="item.flow_type_id"> {{ item.flow_type_name }}
+                            :value="item.flow_type_id" :key="item.flow_type_id" :lable=' item.flow_type_name'> {{ item.flow_type_name }}
                         </a-select-option>
                     </a-select>
                     <a-button type="link" :disabled="!submitDataInfo['approveDisBtn']" 
@@ -134,7 +134,7 @@
                     </a-timeline-item>
                 </a-timeline>
             </a-modal>
-            <!-- 修改审批流程(单) -->
+            <!-- 修改审批流程(单)   表格里的修改-->
             <a-modal :title="showModel.captionsTitle" centered v-model="showModel.modalInput_single" 
                 @ok="confirmBtn(submitDataInfo['org_flow_step'])" @cancel="resetSubmitInfo_single">
                 <div style="margin-bottom: 10px">
@@ -444,8 +444,6 @@
                     2: "comfirmEditApp",
                     3: "andItemCase"
                 }
-                 console.log('itemid')
-                 console.log(itemId)
                 this[listData[itemId]]()
                 this.submitDataInfo.org_flow_step = 0
             },
@@ -469,7 +467,7 @@
                 })
                 this.showModel.modalInput = true;
             },
-            addItemFlow(e,order){
+            addItemFlow(e,order){               
                 this.showModel.captionsTitle = '新增审批流程信息';
                 this.submitDataInfo.org_flow_step = order;
                 this.showModel.modalAdd_single = true;
@@ -561,13 +559,14 @@
             },
             //递归遍历
             recurTest(item,index){
-                console.log(item)
+                console.log('递归遍历')
+                console.log(this.submitDataInfo)
                 this.$api.addApproveData({
                     org_flow_id: this.submitDataInfo['org_flow_id'],
                     approve_name: item.approve_name,
                     approve_type: item.approve_type,
                     attribute_order: item.attribute_order,
-                    is_last: Number(index+1 == this.submitDataInfo['approveList'].length)
+                    // is_last: Number(index+1 == this.submitDataInfo['approveList'].length)
                 }).then((returnData)=>{
                     this.$api.addApproveManData({
                         approve_id: returnData.data.approve_id,

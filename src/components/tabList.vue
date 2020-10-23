@@ -69,6 +69,7 @@
                             { icon: 'icon-pifu',title: '批复状态',keyId: 'caseStatus' },
                             { icon: 'icon-file-management-borrowed-record',title: '案卷借阅',keyId: 'caseBorrowing' },
                             { icon: 'icon-guihuan',title: '案卷归还',keyId: 'caseReturn' },
+                            { icon: 'icon-guihuan',title: '出入库历史',keyId: 'caseHistory' },
                         ]
                     },
                     {
@@ -98,6 +99,15 @@
                     },
                     {
                         downIcon: ['1'],
+                        captionsTitle: { icon: 'icon-shujutongji',title: '统计报表',keyId: 'tab_tongji' },
+                        childrenList: [ 
+                            { icon: 'icon-tongji',title: '部门统计',keyId: 'tEchart' },
+                            { icon: 'icon-tongji',title: '时间统计',keyId: 'timeechart' }
+           
+                        ]
+                    },
+                    {
+                        downIcon: ['1'],
                         captionsTitle: { icon: 'icon-zonghechaxun',title: '综合查询',keyId: 'tab_compre' },
                         childrenList: [
                             { icon: 'icon-chaxunrenwu',title: '卷宗查询',keyId: 'queryCase' },
@@ -112,12 +122,12 @@
                             { icon: 'icon-bumenshezhi',title: '部门设置',keyId: 'setDepartment' },
                             { icon: 'icon-quanxianshezhi',title: '权限设置',keyId: 'setJurisdiction' },
                             { icon: 'icon-xinzeng',title: '添加操作员',keyId: 'setOperator' },
-                            // { icon: 'icon-jifang',title: '物品处理方式设置',keyId: 'setProcessMode' },
                             { icon: 'icon-loupan',title: '楼宇设置',keyId: 'setBuilding' },
                             { icon: 'icon-louceng-copy',title: '楼层设置',keyId: 'setFloor' },
                             { icon: 'icon-shebeishezhi',title: '物品保全室设置',keyId: 'setPreservation' },
                             { icon: 'icon-shebeishezhi',title: '区域设置',keyId: 'setAreaLine' },
                             { icon: 'icon-shebeishezhi',title: '智能存储设备设置',keyId: 'setStorageDevice' },
+                            { icon: 'icon-shebeishezhi',title: '格子设置',keyId: 'setGuizi' },
                             // { icon: 'icon-qushi',title: '一体机设置',keyId: 'setAIO' },
                             { icon: 'icon-shexiangtoushezhi',title: '摄像头设置',keyId: 'setCamera' },
                             { icon: 'icon-shineiwenshiduchuanganqi-ditu',title: '温湿度计设置',keyId: 'setTHCALC' },
