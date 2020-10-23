@@ -32,12 +32,17 @@ import caseStatus from './view/managementOut/caseStatus'
 import caseBorrowing from './view/managementOut/caseBorrowing'
 // 出库管理_案卷归还
 import caseReturn from './view/managementOut/caseReturn'
+// 出库历史查询
+import caseHistory from './view/managementOut/caseHistory'
 // 案卷借阅详情_出库管理
 import caseAppDetail from './view/managementOut/caseAppDetail'
 // 案件列表_待入库信息
 import caseWaiting from './view/home/caseWaiting'
 // 案件列表_应入库信息
 import caseReceived from './view/home/caseReceived'
+//统计报表
+import tEchart from './view/tchart/techart'
+import timeechart from './view/tchart/timeechart'
 // 主办民警_图表统计
 import policeMan from './view/chartCensus/policeMan'
 // 柜使用状态_图表统计
@@ -59,7 +64,8 @@ import setCamera from './view/system/setCamera'
 import setAIO from './view/system/setAIO'
 import setPreservation from './view/system/setPreservation'
 import setJurisdiction from './view/system/setJurisdiction'
-import setStorageDevice from './view/system/setStorageDevice'
+import setStorageDevice from './view/system/setStorageDevice'  //setGuizi
+import setGuizi from './view/system/setGuizi'
 import setApprovalLine from './view/system/setApprovalLine'
 // 告警设置
 import setWarning from './view/system/setWarning'
@@ -224,6 +230,14 @@ export default new Router({
             navigationBarTitleText: '权限设置'
           }
         },
+        
+        {
+          path: 'setGuizi',
+          component: setGuizi,
+          meta: {
+            navigationBarTitleText: '格子设置'
+          }
+        },
         {
           path: 'setStorageDevice',
           component: setStorageDevice,
@@ -299,6 +313,28 @@ export default new Router({
           component: caseReturn,
           meta: {
             navigationBarTitleText: '案卷归还'
+          },
+        },
+        {
+          path: 'caseHistory',
+          component: caseHistory,
+          meta: {
+            navigationBarTitleText: '出入库历史'
+          }
+        },
+        // tEchart  timeechart
+        {
+          path: 'tEchart',
+          component: tEchart,
+          meta: {
+            navigationBarTitleText: '部门统计'
+          }
+        },
+        {
+          path: 'timeechart',
+          component: timeechart,
+          meta: {
+            navigationBarTitleText: '时间统计'
           }
         },
         {

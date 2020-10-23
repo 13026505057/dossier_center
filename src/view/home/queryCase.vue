@@ -5,6 +5,7 @@
                 按案卷名称查询： 
                 <a-input placeholder="请输入案卷名称" allowClear v-model="searchValue" class="enterInputData"/>
                 <a-input placeholder="请输入案卷编号" allowClear v-model="searchValue2" class="enterInputData"/>
+                <a-input placeholder="请输入案卷类型" allowClear v-model="searchValue2" class="enterInputData"/>
                 <a-button class="comfirmAdd" @click="confirmSearch">查询</a-button>
                 <a-button type="primary" ghost class="refreshBtn" @click="refreshBtn()">刷新</a-button>
             </div>
@@ -22,7 +23,7 @@
                     <a-col class="gutter-row itemData" :span="12" v-for="(item,index) in showModel.tableDataCase" 
                         :key="index" style="margin-bottom: 10px;">
                         <div class="gutter-box">
-                            <span style="color: #666;margin-right: 10px">{{ item.title }}: </span>
+                            <span style="color: #666;margin-right:5px">{{ item.title }}: </span>
                             <span>{{ item.value }}</span>
                         </div>
                     </a-col>
@@ -38,6 +39,7 @@
             return{
                 searchValue: '',
                 searchValue2:'',
+                searchValue3:'',
                 //标题
                 columns_dossier: [
                     { title: '案件/事件编号', dataIndex: 'number', },
@@ -55,7 +57,8 @@
                     pageNum: 1,
                     pageSize: 10,
                     dossier_name: '',
-                    case_police_nm:''
+                    case_police_nm:'',
+                    dossier_type_name:'',
                 },
                 loading: false,
                 //详情信息
@@ -73,23 +76,25 @@
         methods: {
             //查看详情
             showDetail(e){
+                console.log('当前行')
                 console.log(e)
                 this.showModel.modalDetail = true;
                 let dataDomArr = [
-                    { dom: 'case_police_bh',title: '案件编号' },
-                    { dom: 'dossier_name',title: '案卷名称' },
-                    { dom: 'dossier_type_name',title: '案卷类型' },
-                    { dom: 'dossier_create_time',title: '创建时间' },
+                    { dom: 'number',title: '案件编号' },
+                    { dom: 'name',title: '案卷名称' },
+                    { dom: 'type',title: '案卷类型' },
+                    { dom: 'creatDate',title: '创建时间' },
                     { dom: 'organiza_org_namee',title: '主办单位' },
                 ];
                 let dataDom = [];
                 dataDomArr.forEach((item,index)=>{
                     dataDom.push({
-                        title: dataDomArr[index].title,
-                        value: e[dataDomArr[index].dom]
+                        title: item.title,
+                        value: e[item.dom]
                     })
                 })
                 this.showModel.tableDataCase = dataDom;
+                console.log(this.showModel.tableDataCase)
             },
             handleTableChange(pagination) {
                 // console.log(pagination);
@@ -106,6 +111,7 @@
                 this.pagination.pageSize = 10,
                 this.pagination.dossier_name = this.searchValue;
                 this.pagination.case_police_nm = this.searchValue2;
+                this.pagination.dossier_type_name = this.searchValue3;
                 this.getQueryListData(this.pagination);
             },
             //

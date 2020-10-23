@@ -60,6 +60,8 @@
                     { title: '案件来源', dataIndex: 'caseFrom', },
                     { title: '案件类型', dataIndex: 'typeCase', },
                     { title: '受案单位', dataIndex: 'acceptUnit', },
+                    { title: '机构名称', dataIndex: 'cell_org', },
+                    { title: '柜子类型', dataIndex: 'cell_case_type', },
                     { title: '主办单位', dataIndex: 'hostUnit', },
                     { title: '主办民警', dataIndex: 'hostPeo', },
                     { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' }, },
@@ -119,6 +121,8 @@
                         listData: item.stockList,
                         hostUnit: item.organiza_org_name,
                         hostPeo: item.organiza_user_name,
+                        cell_org:item.cell_org_name,
+                        cell_case_type:item.cell_case_type
                     })
                 })
                 this.tableData_criminal = queryData;

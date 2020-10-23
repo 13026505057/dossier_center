@@ -81,6 +81,14 @@ export default {
             data
         })
     },
+    //出入库历史查询
+    getHistoryList_Page(data){
+        return service({
+            url: '/juanzong/stockLog/getByPage',
+            method: 'post',
+            data
+        })
+    },
     //卷宗分页查询
     getQueryCaseList_Page(data){
         return service({
@@ -761,10 +769,50 @@ export default {
             data
         })
     },
+    //系统设置 格子设置
+    Guizilist(data){
+        return service({
+            url: '/juanzong/cell/cell/getByPage',
+            method: 'post',
+            data
+        })
+    },
+    // 系统设置 格子设置 修改查询所有机构
+    Guiziorg(data){
+        return service({
+            url: '/juanzong/org/org/getByPage',
+            method: 'post',
+            data
+        })
+    },
+    //系统设置 格子设置 修改查询所有类型
+    Guizicase(data){
+        return service({
+            url: '/juanzong/caseType/getByPage',
+            method: 'post',
+            data
+        })
+    },
+    //系统设置 格子设置 修改提交
+    Guiziupdate(data){
+        return service({
+            url: '/juanzong/cell/cell/update',
+            method: 'post',
+            data
+        })
+    },
     // 查询所有部门
     selctbm(data){
         return service({
             url: '/juanzong/dept/dept/get',
+            method: 'post',
+            data
+        })
+    },
+    // 统计报表
+    tjechar(data){
+        return service({
+            url: '/juanzong/stock/stockTable',
             method: 'post',
             data
         })
