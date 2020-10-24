@@ -28,7 +28,7 @@
       typeGShow: [Object],
     },
     mounted () {
-      console.log(this.charData)
+      console.log(this.charData,"------")
       setTimeout(()=>{
         this.drawChart()
       },100)

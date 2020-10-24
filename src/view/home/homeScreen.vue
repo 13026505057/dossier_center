@@ -131,6 +131,7 @@
             }
         },
         mounted() {
+            console.log(this.caseData_in,"===---===")
             this.getCaseLogList_Page(this.pagination);
             this.getShowDataInfo();
         },
