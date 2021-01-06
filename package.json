@@ -15,7 +15,7 @@
   "dependencies": {
     "@antv/g2": "^4.0.2",
     "ant-design-vue": "^1.4.12",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.4",
     "css-loader": "^3.4.2",
     "echarts": "^4.9.0",
